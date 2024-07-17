@@ -14,7 +14,8 @@ SRC_FILES := ft_atoi.c mem/ft_bzero.c mem/ft_calloc.c ft_isalnum.c ft_isalpha.c 
 			lst/ft_lstiter.c lst/ft_lstmap.c \
 			handlers/flag_handler.c helpers/num_helpers.c \
             helpers/print_helpers.c str/ft_str_utils.c\
-            ft_printf.c dllist/dllist1.c dllist/dlnode.c dllist/dllist_free.c
+            ft_printf.c dllist/dllist1.c dllist/dlnode.c dllist/dllist_free.c \
+            gnl/get_next_line.c gnl/gnl_utils.c
 OBJ_DIR := obj
 OBJ_FILES = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
 HEADER := -I ../../include/
