@@ -1,0 +1,12 @@
+*.o
+*.txt
+*.dSYM
+.idea
+*.a
+.DS_Store
+a.out
+CMakeLists.txt
+build
+bin
+obj
+cmake-build-debug
