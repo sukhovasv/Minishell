@@ -6,7 +6,7 @@
 /*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 16:14:52 by ssukhova          #+#    #+#             */
-/*   Updated: 2024/07/24 16:14:55 by ssukhova         ###   ########.fr       */
+/*   Updated: 2024/07/24 19:11:07 by ssukhova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*get_path_variable(char **envp)
 		ft_printf("PATH not found in environment variables\n");
 		return (NULL);
 	}
-	return (envp[i] + 5);
+	return (envp[i] + ft_strlen("PATH="));
 }
 
 char	**split_path_variable(char *path_var)
