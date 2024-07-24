@@ -10,7 +10,7 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c
+	$(SRC_DIR)/main.c $(SRC_DIR)/pipex.c $(SRC_DIR)/find_path.c $(SRC_DIR)/find_path_utils.c $(SRC_DIR)/utils.c $(SRC_DIR)/here_doc.c $(SRC_DIR)/handle_process.c
 
 # Object files
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
