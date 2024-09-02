@@ -10,14 +10,14 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c $(SRC_DIR)/pipex.c $(SRC_DIR)/find_path.c $(SRC_DIR)/find_path_utils.c $(SRC_DIR)/utils.c $(SRC_DIR)/here_doc.c $(SRC_DIR)/handle_process.c
+	$(SRC_DIR)/main.c $(SRC_DIR)/builtins.c $(SRC_DIR)/execute.c $(SRC_DIR)/signals.c $(SRC_DIR)/here_doc.c $(SRC_DIR)/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins_env_unset.c $(SRC_DIR)/builtins_export.c $(SRC_DIR)/builtins_export_utils_1.c $(SRC_DIR)/builtins_export_utils_2.c
 
 # Object files
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 # Libraries
 LIBFT = $(LIBFT_DIR)/libft.a
-LIBS = -L$(LIBFT_DIR) -lft
+LIBS = -L$(LIBFT_DIR) -lft -lreadline
 
 # Targets
 all: directories $(BIN_DIR)/minishell
@@ -46,7 +46,7 @@ clean:
 
 fclean: clean
 	$(RM) -r $(BIN_DIR)
-	$(RM) ./push_swap
+	$(RM) ./minishell
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
