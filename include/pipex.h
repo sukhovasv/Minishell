@@ -70,5 +70,6 @@ void	handle_child_process(t_pipex *pipex, t_args *args,
 			int prev_pipe_fd, int i);
 void	handle_parent_process(t_pipex *pipex, int *prev_pipe_fd);
 void	handle_here_doc(char *limiter);
+char	*trim_str(char *str);
 
 #endif
