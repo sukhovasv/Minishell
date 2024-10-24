@@ -1,3 +1,4 @@
+//TODO simplify comments, 5 lines max
 /*
 Функция builtin_cd:
 Реализует команду cd (change directory), которая изменяет текущий рабочий
@@ -39,7 +40,7 @@ if (env_value) printf("%s", env_value) Если переменная окруж�
 переменной окружения, он выводится как есть.
 */
 
-#include "../include/minishell.h"
+#include "minishell.h"
 
 void builtin_cd(char **argv)
 {
