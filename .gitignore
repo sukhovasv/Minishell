@@ -3,6 +3,7 @@
 *.dSYM
 .idea
 *.a
+.vscode
 .DS_Store
 a.out
 CMakeLists.txt

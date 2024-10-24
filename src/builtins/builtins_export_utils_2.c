@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "minishell.h"
 
 /*
 count_env_vars считает переменные окружения в массиве строк env

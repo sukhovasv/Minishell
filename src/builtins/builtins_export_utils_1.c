@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "minishell.h"
 
 /*
 allocate_env_var создает новую строку, т.е. переменную окружения в формате "ключ=значение".

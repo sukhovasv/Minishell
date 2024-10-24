@@ -10,7 +10,15 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c $(SRC_DIR)/builtins.c $(SRC_DIR)/execute.c $(SRC_DIR)/signals.c $(SRC_DIR)/here_doc.c $(SRC_DIR)/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins_env_unset.c $(SRC_DIR)/builtins_export.c $(SRC_DIR)/builtins_export_utils_1.c $(SRC_DIR)/builtins_export_utils_2.c
+	$(SRC_DIR)/main.c $(SRC_DIR)/builtins/builtins.c $(SRC_DIR)/execute.c \
+	$(SRC_DIR)/signals.c $(SRC_DIR)/here_doc.c \
+	$(SRC_DIR)/builtins/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins/builtins_env_unset.c \
+	$(SRC_DIR)/builtins/builtins_export.c $(SRC_DIR)/builtins/builtins_export_utils_1.c \
+	$(SRC_DIR)/builtins/builtins_export_utils_2.c $(SRC_DIR)/tokens/tokens.c \
+	$(SRC_DIR)/tokens/special_char_token.c $(SRC_DIR)/tokens/tokenise.c \
+	$(SRC_DIR)/tokens/tokenise_phrase.c \
+	$(SRC_DIR)/validation/input_helper.c $(SRC_DIR)/validation/input_validator.c
+
 
 # Object files
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))

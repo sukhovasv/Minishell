@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "minishell.h"
 
 /*
 void remove_variable(t_env *env_struct, const char *key)

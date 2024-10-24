@@ -34,7 +34,7 @@ execute_builtin Выполняет встроенную команду.
 execute_non_builtin Выполняет внешнюю команду.
 */
 
-#include "../include/minishell.h"
+#include "minishell.h"
 
 void handle_redirections(char **argv)
 {

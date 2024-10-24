@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include "libft.h"
+#include "tokens.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -30,6 +31,7 @@ typedef struct {
 void handle_signals(int sig);
 void setup_signals(void);
 void execute_command(char *input, t_env *env_struct);
+//TODO: move  to separate .h file
 int is_builtin(char *cmd);
 void execute_builtin(char **argv, t_env *env_struct);
 void builtin_cd(char **argv);
