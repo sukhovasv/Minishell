@@ -179,7 +179,8 @@ char *get_env_value(const char *str, t_env *env)
     free(var_name);
     if (value)
     	return (value);
-	return (ft_strdup(""));
+    else
+        return (ft_strdup(""));
 }
 
 // Обработка открывающей кавычки
