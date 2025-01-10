@@ -1,34 +1,79 @@
 #include "minishell.h"
 
-/*
-Функция builtin_export
-Реализует команду export, которая используется для добавления
-или изменения переменных окружения в оболочке.
-Например, при вводе export VAR=value, функция, добавляет или изменяет
-переменную окружения VAR, устанавливая её значение в value.
-char **argv — массив аргументов командной строки (переменные окружения в формате ключ=значение)
-*/
-
-void builtin_export(char **argv, t_env *env_struct)
+static int handle_export_error(char *arg)
 {
-    int i;
-    char *equal_sign;
-    const char *key;
-    const char *value;
+    ft_putstr_fd("export: '", STDERR_FILENO);
+    ft_putstr_fd(arg, STDERR_FILENO);
+    ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+    return (1);
+}
 
-    i = 1; //пропускаем саму команду
+static int export_var(t_env *env, char *key, char *value)
+{
+    if (!is_valid_env_name(key))
+        return (handle_export_error(key));
+    
+    if (!update_existing_variable(env, key, value))
+        add_new_variable(env, key, value);
+    return (0);
+}
+
+static char *get_key_value(char *arg, char **value)
+{
+    char *equal_sign;
+    char *key;
+    size_t key_len;
+    size_t value_len;
+    
+    *value = NULL;
+    equal_sign = ft_strchr(arg, '=');
+    
+    if (!equal_sign)
+    {
+        key = ft_strdup(arg);
+        return key;
+    }
+
+    // Вычисляем длины ключа и значения
+    key_len = equal_sign - arg;
+    value_len = ft_strlen(equal_sign + 1);
+    // Выделяем память для ключа
+    key = (char *)malloc(key_len + 1);
+    if (!key)
+        return (NULL);
+    // Копируем ключ
+    ft_strlcpy(key, arg, key_len + 1);
+    // Выделяем память и копируем значение
+    *value = (char *)malloc(value_len + 1);
+    if (!*value)
+    {
+        free(key);
+        return (NULL);
+    }
+    ft_strlcpy(*value, equal_sign + 1, value_len + 1);
+    return key;
+}
+
+int builtin_export(char **argv, t_env *env)
+{
+    int     i;
+    char    *key;
+    char    *value;
+    int     status;
+
+    status = 0;
+    i = 1;
     while (argv[i])
     {
-        equal_sign = ft_strchr(argv[i], '='); //ищем символ "="
-        if (equal_sign)
-        {
-            *equal_sign = '\0'; //чтобы разделить строку на ключ и значение. Теперь argv[i] содержит только ключ (так как строка была разделена на две).
-            key = argv[i]; //сохраняем указатель на ключ
-            value = equal_sign + 1; //сохраняем значение как часть строки сразу после "="
-            if (!update_existing_variable(env_struct, key, value)) //если переменная уже существует, то обновляем ее
-                add_new_variable(env_struct, key, value); //если переменная не существует, то создаем новую
-            *equal_sign = '='; //восстанавливаем символ "=", чтобы строка была корректной
-        }
+        value = NULL;
+        key = get_key_value(argv[i], &value);
+        if (!key)
+            return (1);
+        if (export_var(env, key, value) != 0)
+            status = 1;
+        free(key);
+        free(value);
         i++;
     }
+    return (status);
 }

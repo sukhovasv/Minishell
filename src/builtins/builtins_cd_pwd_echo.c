@@ -1,117 +1,114 @@
-//TODO simplify comments, 5 lines max
-/*
-Функция builtin_cd:
-Реализует команду cd (change directory), которая изменяет текущий рабочий
-каталог на указанный. (Если аргумент не указан, функция переходит в домашний
-каталог пользователя).
-Параметр функции - массив строк, строки - аргументы командной строки.
-1) проверяем, был ли передан аргумент для команды cd (argv[0] - сама команда cd,
-а argv[1] - это аргумент команды (путь к директории)). Если argv[1] равно NULL,
-значит, аргумент не был передан, и нужно перейти в домашний каталог пользователя.
-Для перехода в домашний каталог используем функцию getenv("HOME"). Она возвращает
-значение переменной окружения HOME, которая указывает на домашний каталог
-пользователя. Если переменная HOME не установлена, getenv вернет NULL.
-Если home не равно NULL, вызываем функцию chdir(home), которая изменяет текущий
-рабочий каталог на указанный в home.
-else if (chdir(argv[1]) != 0):
-Выполняется, если был передан аргумент argv[1], то есть указан путь для перехода.
-Функция chdir изменяет текущий рабочий каталог на указанный путь.
-Если chdir возвращает не 0, значит произошла
-ошибка при смене директории (каталог не существует или нет прав на доступ).
-Вызываем perror чтобы вывести сообющение об ошибке.
-
-Функция builtin_pwd:
-Реализует команду pwd (print working directory), которая выводит текущий
-рабочий каталог.
-Объявляем буфер (char swd[1024]), чтобы хранить путь к текущему рабочему каталогу.
-getcwd (get current working directory) заполняет указанный буфер cwd строкой,
-представляющей текущий рабочий каталог.
-
-Функция builtin_echo
-Реализует команду echo. Отвечает за вывод строки в консоль,
-с возможностью подавления новой строки при использовании флага -n.
-print_argument(char *arg)
-if (arg[0] == '$' && arg[1] != '\0'): Проверяется, начинается ли аргумент
-с символа $. Если да, то программа предполагает, что это переменная окружения.
-char *env_value = getenv(&arg[1]) Вызов функции getenv с аргументом,
-начиная со второго символа строки arg, чтобы получить значение переменной окружения.
-if (env_value) printf("%s", env_value) Если переменная окружения существует,
-ее значение выводится на экран. else printf("%s", arg);: Если аргумент не является
-переменной окружения, он выводится как есть.
-*/
-
 #include "minishell.h"
 
-void builtin_cd(char **argv)
-{
-    const char *home;
-
-    if (argv[1] == NULL)
-    {
-        home = getenv("HOME");
-        if (home == NULL)
-            printf("cd: HOME environment variable not set\n");
-        else if (chdir(home) != 0)
-            perror("cd");
-    }
-    else if (chdir(argv[1]) != 0)
-        perror("cd");
-}
-
-void builtin_pwd(void)
-{
-    char cwd[1024];
-
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        printf("%s\n", cwd);
-    else
-        perror("getcwd");
-}
-
-void builtin_echo(char **argv)
-{
-    int n_flag;
-    
-    n_flag = check_n_flag(argv);
-    print_arguments(argv, n_flag);
-    if (!n_flag)
-        printf("\n");
-}
-
-int check_n_flag(char **argv)
-{
-    if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
-        return (1);
-    return (0);
-}
-
-void print_arguments(char **argv, int n_flag)
+static int is_str_digit(const char *str)
 {
     int i;
 
-    if (n_flag)
-        i = 2;  // Если флаг -n установлен, начинаем с третьего аргумента
-    else
-        i = 1;  // Если флаг -n не установлен, начинаем со второго аргумента
-    while (argv[i])
+    i = 0;
+    while (str[i])
     {
-        print_argument(argv[i]);
-        if (argv[i + 1])
-            printf(" ");
+        if (!ft_isdigit(str[i]))
+            return (0);
         i++;
     }
+    return (1);
 }
 
-void print_argument(char *arg)
+int builtin_echo(char **argv)
 {
-    char    *env_value;
+    int i;
+    int n_flag;
 
-    if (arg[0] == '$' && arg[1] != '\0') // Проверяем, начинается ли аргумент с '$'
+    n_flag = 0;
+    i = 1;
+
+    if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
     {
-        env_value = getenv(&arg[1]); // Получаем значение переменной окружения
-        if (env_value)
-            printf("%s", env_value);
+        n_flag = 1;
+        i++;
     }
-    else
-        printf("%s", arg);
+
+    while (argv[i])
+    {
+        ft_putstr_fd(argv[i], STDOUT_FILENO);
+        if (argv[i + 1])
+            ft_putchar_fd(' ', STDOUT_FILENO);
+        i++;
+    }
+
+    if (!n_flag)
+        ft_putchar_fd('\n', STDOUT_FILENO);
+    
+    return (0);
+}
+
+int builtin_cd(char **argv)
+{
+    extern char **environ;
+    t_env *env;
+    char path[PATH_MAX];
+    char *home;
+
+    env = init_env(environ);
+    if (!argv[1])
+    {
+        home = get_env_value("HOME", env);  // Функция поиска в env->environ
+        if (!home)
+        {
+            ft_putendl_fd("cd: HOME environment variable not set", 2);
+            return (1);
+        }
+        if (chdir(home) != 0)
+        {
+            perror("cd");
+            return (1);
+        }
+    }
+    else if (chdir(argv[1]) != 0)
+    {
+        perror("cd");
+        return (1);
+    }
+    
+    if (getcwd(path, PATH_MAX))
+        update_existing_variable(env, "PWD", path);  // Функция обновления в env->environ
+    return (0);
+}
+
+int builtin_pwd(void)
+{
+    char cwd[PATH_MAX];
+
+    if (getcwd(cwd, sizeof(cwd)))
+    {
+        ft_putendl_fd(cwd, STDOUT_FILENO);
+        return (0);
+    }
+    
+    perror("pwd");
+    return (1);
+}
+
+int builtin_exit(char **argv)
+{
+    int status;
+    
+    status = 0;
+    if (argv[1])
+    {
+        if (!is_str_digit(argv[1]))
+        {
+            ft_putstr_fd("exit: ", 2);
+            ft_putstr_fd(argv[1], 2);
+            ft_putendl_fd(": numeric argument required", 2);
+            exit(255);
+        }
+        status = ft_atoi(argv[1]);
+        if (argv[2])
+        {
+            ft_putendl_fd("exit: too many arguments", 2);
+            return (1);
+        }
+    }
+    exit(status & 0xFF);
 }
