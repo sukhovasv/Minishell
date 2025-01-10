@@ -50,7 +50,7 @@ static void init_quote_state(t_quote_state *state)
         state->result[0] = '\0';
 }
 
-static int append_to_result(t_quote_state *state, const char *str)
+/*static int append_to_result(t_quote_state *state, const char *str)
 {
     size_t len;
     char *new_buf;
@@ -69,7 +69,33 @@ static int append_to_result(t_quote_state *state, const char *str)
     if (state->length > 0)
     {
         state->result[state->length] = '\n';
+        //state->result[state->length] = ' ';
         state->length++;
+    }
+    ft_strlcpy(state->result + state->length, str, state->capacity - state->length);
+    state->length += len;
+    return (1);
+}*/
+
+static int append_to_result(t_quote_state *state, const char *str)
+{
+    size_t len;
+    char *new_buf;
+
+    len = ft_strlen(str);
+    if (state->length + len + 3 >= state->capacity)  // +3 для \n и возможного >
+    {
+        state->capacity = (state->length + len + 3) * 2;
+        new_buf = malloc(state->capacity);
+        if (!new_buf)
+            return (0);
+        ft_strlcpy(new_buf, state->result, state->capacity);
+        free(state->result);
+        state->result = new_buf;
+    }
+    if (state->length > 0)
+    {
+        state->result[state->length++] = '\n';  // Добавляем перенос строки
     }
     ft_strlcpy(state->result + state->length, str, state->capacity - state->length);
     state->length += len;
