@@ -24,18 +24,11 @@ static void disable_terminal_control_chars(int fd)
 
 static void handle_sigint(int sig)
 {
-    //printf("[DEBUG] handle_sigint: start\n");
     g_signal_received = sig;
     
-    // Очищаем текущую строку readline
-    //rl_delete_text(0, rl_end);
-    // Переходим на новую строку
     write(STDOUT_FILENO, "\n", 1);
-    // Заново печатаем промпт
     rl_already_prompted = 0;
     rl_forced_update_display();
-    
-    //printf("[DEBUG] handle_sigint: end\n");
 }
 
 static void handle_sigquit(int sig)
@@ -90,20 +83,12 @@ void ignore_signals(void)
     signal(SIGQUIT, SIG_IGN);
 }
 
-void restore_signals(void)
-{
-    setup_parent_signals();
-}
-
 void handle_pending_signals(void)
 {
-    //printf("[DEBUG] handle_pending_signals: entered with signal %d\n", g_signal_received);
     if (g_signal_received == SIGINT)
     {
-        //printf("[DEBUG] handle_pending_signals: processing SIGINT\n");
         //rl_on_new_line();
         rl_redisplay();
     }
-    //printf("[DEBUG] handle_pending_signals: clearing signal flag\n");
     g_signal_received = 0;
 }

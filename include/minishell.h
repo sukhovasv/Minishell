@@ -125,7 +125,6 @@ void reset_signals(void);
 void setup_child_signals(void);
 void setup_parent_signals(void);
 void ignore_signals(void);
-void restore_signals(void);
 void handle_pending_signals(void);
 
 // Функции парсинга и токенизации

@@ -21,7 +21,7 @@ int handle_signals_and_fork(t_heredoc_data *heredocs, int count)
 
     ignore_signals();
     status = fork_and_process_heredocs(heredocs, count);
-    restore_signals();
+    setup_parent_signals();
 
     return (status != -1 && WIFEXITED(status) && WEXITSTATUS(status) == 0);
 }

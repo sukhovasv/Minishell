@@ -101,22 +101,6 @@ static size_t handle_operator(const char *str, t_token **tokens)
     return (len);
 }
 
-/*static char *handle_special_env(const char *str, t_env *env)
-{
-    char *status;
-
-    if (!str || !env)
-        return (NULL);
-    if (str[0] == '?')
-    {
-        status = ft_itoa(env->last_status);
-        if (!status)
-            return (ft_strdup("0"));
-        return (status);
-    }
-    return (NULL);
-}*/
-
 static char *handle_special_env(const char *str, t_env *env)
 {
     char *status;
@@ -137,22 +121,25 @@ static char *handle_special_env(const char *str, t_env *env)
 
 static char *find_env_value(const char *var_name, size_t len, t_env *env)
 {
-    char *value;
     int i;
 
     i = 0;
-    value = NULL;
     while (env->environ[i])
     {
-        if (ft_strncmp(env->environ[i], var_name, len) == 0 && 
-            env->environ[i][len] == '=')
+        // Сначала проверяем длину имени переменной
+        size_t env_name_len = 0;
+        while (env->environ[i][env_name_len] && env->environ[i][env_name_len] != '=')
+            env_name_len++;
+            
+        // Сравниваем только если длины совпадают
+        if (env_name_len == len && 
+            ft_strncmp(env->environ[i], var_name, len) == 0)
         {
-            value = ft_strdup(env->environ[i] + len + 1);
-            break;
+            return ft_strdup(env->environ[i] + len + 1);
         }
         i++;
     }
-    return (value);
+    return (ft_strdup(""));
 }
 
 char *get_env_value(const char *str, t_env *env)
@@ -183,7 +170,6 @@ char *get_env_value(const char *str, t_env *env)
         return (ft_strdup(""));
 }
 
-// Обработка открывающей кавычки
 static int handle_opening_quote(const char *str, size_t *i, int *in_quotes, char *quote_char)
 {
     if ((str[*i] == '"' || str[*i] == '\'') && !(*in_quotes))
@@ -196,7 +182,6 @@ static int handle_opening_quote(const char *str, size_t *i, int *in_quotes, char
     return (0);
 }
 
-// Обработка закрывающей кавычки
 static int handle_closing_quote(const char *str, size_t *i, int *in_quotes, char *quote_char)
 {
     if (*in_quotes && str[*i] == *quote_char)
@@ -209,7 +194,6 @@ static int handle_closing_quote(const char *str, size_t *i, int *in_quotes, char
     return (0);
 }
 
-// Перевыделение памяти для результата
 static char *reallocate_result(char *result, char *env_val, size_t j, size_t env_len)
 {
     char *new_result = realloc(result, (j + env_len + 2) * sizeof(char));
@@ -222,25 +206,13 @@ static char *reallocate_result(char *result, char *env_val, size_t j, size_t env
     return (new_result);
 }
 
-// Копирование значения переменной окружения
-static void copy_env_value(char *result, char *env_val, size_t *j)
+static void copy_env_value(char *result, const char *env_val, size_t *j)
 {
     size_t env_len = ft_strlen(env_val);
     ft_strlcpy(result + *j, env_val, env_len + 1);
     *j += env_len;
 }
 
-// Пропуск имени переменной окружения
-static void skip_env_name(const char *str, size_t *i, size_t len)
-{
-    if (str[*i + 1] == '?')
-        (*i)++;
-    else
-        while (*i < len && (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'))
-            (*i)++;
-}
-
-// Обработка переменной окружения
 static char *handle_env_var(const char *str, size_t *i, char *result, size_t *j, 
                           size_t len, t_env *env)
 {
@@ -257,38 +229,46 @@ static char *handle_env_var(const char *str, size_t *i, char *result, size_t *j,
     }
     copy_env_value(result, env_val, j);
     free(env_val);
-    skip_env_name(str, i, len);
+    
+    // Пропускаем имя переменной целиком
+    if (str[*i + 1] == '?')
+        (*i)++;
+    else
+    {
+        (*i)++; // Пропускаем $
+        while (*i < len && (ft_isalnum(str[*i]) || str[*i] == '_'))
+            (*i)++;
+        (*i)--; // Компенсируем i++ в вызывающей функции
+    }
+    
     return (result);
 }
-
-// Копирование обычного символа
-/*static void copy_char(const char *str, size_t *i, char *result, size_t *j)
-{
-    result[*j] = str[*i];
-    (*j)++;
-}*/
 
 static char *process_word_content(const char *str, size_t *i, char *result, 
     size_t *j, size_t len, t_env *env, int *in_quotes, char *quote_char)
 {
     while (*i < len)
     {
+        // Обработка кавычек
         if (handle_opening_quote(str, i, in_quotes, quote_char))
             continue;
         if (handle_closing_quote(str, i, in_quotes, quote_char))
             continue;
+
+        // Обработка переменной окружения
         if (str[*i] == '$' && *quote_char != '\'')
         {
             result = handle_env_var(str, i, result, j, len, env);
             if (!result)
                 return (NULL);
+            (*i)++;  // Явно инкрементируем после обработки
+            continue;
         }
-        else
-		{
-            result[*j] = str[*i];
-    		(*j)++;
-        	(*i)++;
-		}
+
+        // Обработка обычного символа
+        result[*j] = str[*i];
+        (*j)++;
+        (*i)++;
     }
     return (result);
 }

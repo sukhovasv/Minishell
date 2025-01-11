@@ -9,7 +9,7 @@ typedef enum e_ast_type
     AST_COMMAND,     // Простая команда (ls, cat, etc)
     AST_PIPE,        // Пайп (|)
     AST_REDIRECT,    // Редирект (<, >, >>, <<)
-    AST_SEQUENCE     // Последовательность команд (;)
+    //AST_SEQUENCE     // Последовательность команд (;)
 } t_ast_type;
 
 // Структура узла AST

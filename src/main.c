@@ -25,19 +25,6 @@ static void init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
    fd_info->saved_stdin = -1;
 }
 
-/*static void cleanup_resources(char *input, char *processed_input, 
-                          t_ast_node *ast, t_token *tokens)
-{
-   if (ast)
-       free_ast_node(ast);
-   if (tokens)
-       free_tokens(tokens);
-   if (processed_input)
-       free(processed_input);
-   if (input)
-       free(input);
-}*/
-
 static int handle_input(char *input, int is_interactive)
 {
    if (!input)
@@ -80,19 +67,6 @@ static void process_command(char *processed_input, t_env *env,
     }
 }
 
-static void cleanup_exit(t_env *env)
-{
-    reset_signals();
-    free_env(env);
-}
-
-/*static void process_valid_input(char *input, char *processed_input,
-                              t_env *env, t_fd_info *fd_info, int is_interactive)
-{
-    process_command(processed_input, env, fd_info, is_interactive);
-    cleanup_resources(input, processed_input, NULL, NULL);
-}*/
-
 static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 {
     char *input;
@@ -105,23 +79,16 @@ static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
             input = readline("minishell> ");
         else
             input = readline("");
-            
         input_status = handle_input(input, is_interactive);
-        
         if (input_status == 0)
             break;
         if (input_status == 1)
             continue;
-        
         if (*input)
         {
-            // Проверяем, содержит ли строка символы новой строки
             from_history = (ft_strchr(input, '\n') != NULL);
             if (from_history)
-            {
-                // Если команда из истории, выполняем её как есть
                 process_command(input, env, fd_info, is_interactive);
-            }
             else
             {
                 // Если новая команда, обрабатываем как обычно
@@ -149,6 +116,7 @@ int main(void)
     if (!env)
         return (1);
     shell_loop(env, &fd_info, is_interactive);
-    cleanup_exit(env);
+    reset_signals();
+    free_env(env);
     return (0);
 }
