@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -DDEBUG -Wall -Wextra -Werror
 
 # Directories
 INCLUDE_DIR = ./include
@@ -10,14 +10,27 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c $(SRC_DIR)/builtins/builtins.c $(SRC_DIR)/execute.c \
-	$(SRC_DIR)/signals.c $(SRC_DIR)/here_doc.c \
-	$(SRC_DIR)/builtins/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins/builtins_env_unset.c \
-	$(SRC_DIR)/builtins/builtins_export.c $(SRC_DIR)/builtins/builtins_export_utils_1.c \
-	$(SRC_DIR)/builtins/builtins_export_utils_2.c $(SRC_DIR)/tokens/tokens.c \
-	$(SRC_DIR)/tokens/special_char_token.c $(SRC_DIR)/tokens/tokenise.c \
-	$(SRC_DIR)/tokens/tokenise_phrase.c \
-	$(SRC_DIR)/validation/input_helper.c $(SRC_DIR)/validation/input_validator.c
+	$(SRC_DIR)/main.c $(SRC_DIR)/builtins/builtins.c \
+	$(SRC_DIR)/execute/execute_command.c $(SRC_DIR)/execute/execute_external.c \
+	$(SRC_DIR)/execute/path_utils.c $(SRC_DIR)/execute/redirections.c \
+	$(SRC_DIR)/execute/redirect_handlers.c $(SRC_DIR)/execute/here_doc.c \
+	$(SRC_DIR)/execute/here_doc_cleanup.c $(SRC_DIR)/execute/here_doc_utils.c \
+	$(SRC_DIR)/execute/here_doc_init.c $(SRC_DIR)/execute/here_doc_process.c \
+	$(SRC_DIR)/execute/utils_fd.c $(SRC_DIR)/execute/ast_executor.c\
+	$(SRC_DIR)/signals.c \
+	$(SRC_DIR)/builtins/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins/builtins_env.c \
+	$(SRC_DIR)/builtins/builtins_export.c $(SRC_DIR)/builtins/builtins_utils.c \
+	$(SRC_DIR)/builtins/builtins_unset.c $(SRC_DIR)/builtins/builtins_env_utils.c \
+	$(SRC_DIR)/parser/parse_quotes.c $(SRC_DIR)/tokenize.c \
+	$(SRC_DIR)/parser/ast_node_creation.c $(SRC_DIR)/parser/ast_args.c \
+	$(SRC_DIR)/parser/ast_parser_utilities.c $(SRC_DIR)/parser/ast_parser.c \
+	$(SRC_DIR)/parser/ast_utils.c $(SRC_DIR)/parser/ast_redirect.c \
+	$(SRC_DIR)/parser/handle_unclosed_quotes.c \
+#	$(SRC_DIR)/tokens/tokens.c \
+#	$(SRC_DIR)/tokens/special_char_token.c $(SRC_DIR)/tokens/tokenise.c \
+#	$(SRC_DIR)/tokens/tokenise_phrase.c \
+#	$(SRC_DIR)/validation/input_helper.c $(SRC_DIR)/validation/input_validator.c
+	
 
 
 # Object files

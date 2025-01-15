@@ -14,42 +14,109 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-//TODO remove after testing
-void print_tokens(t_token *list)
+static void init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
 {
-	t_token *current = list;
-	printf("===%s===\n", current->value);
-	while (current->next)
-	{
-		current = current->next;
-		printf("===%s===\n", current->value);
-	}
+   extern char **environ;
+
+   *env = init_env(environ);
+   setup_signals();
+   *is_interactive = isatty(STDIN_FILENO);
+   fd_info->saved_stdout = -1;
+   fd_info->saved_stdin = -1;
+}
+
+static int handle_input(char *input, int is_interactive)
+{
+   if (!input)
+   {
+       if (g_signal_received != SIGINT)
+       {
+           if (is_interactive)
+               write(1, "exit\n", 5);
+           return (0);
+       }
+       g_signal_received = 0;
+       return (1);
+   }
+   return (2);
+}
+
+static void process_command(char *processed_input, t_env *env, 
+                          t_fd_info *fd_info, int is_interactive)
+{
+    t_token *tokens;
+    t_ast_node *ast;
+    int status;
+
+    if (is_interactive)
+        add_history(processed_input);
+    
+    tokens = tokenize(processed_input, env);
+    if (tokens)
+    {
+        ast = build_ast(tokens);
+        if (ast)
+        {
+            status = execute_ast_node(ast, env, fd_info); 
+            env->last_status = status;
+            if (g_signal_received)
+                handle_pending_signals();
+            free_ast_node(ast);
+        }
+        free_tokens(tokens);
+    }
+}
+
+static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
+{
+    char *input;
+    int input_status;
+    int from_history;
+
+    while (1)
+    {
+        if (is_interactive)
+            input = readline("minishell> ");
+        else
+            input = readline("");
+        input_status = handle_input(input, is_interactive);
+        if (input_status == 0)
+            break;
+        if (input_status == 1)
+            continue;
+        if (*input)
+        {
+            from_history = (ft_strchr(input, '\n') != NULL);
+            if (from_history)
+                process_command(input, env, fd_info, is_interactive);
+            else
+            {
+                // Если новая команда, обрабатываем как обычно
+                char *processed = handle_unclosed_quotes(input);
+                if (processed)
+                {
+                    process_command(processed, env, fd_info, is_interactive);
+                    free(processed);
+                }
+            }
+            free(input);
+        }
+        else
+            free(input);
+    }
 }
 
 int main(void)
 {
-    extern char **environ;
-    t_env env_struct = {environ};
-    char *input;
-	t_token	*tokens;
+    t_env *env;
+    t_fd_info fd_info;
+    int is_interactive;
 
-    setup_signals();
-    while (1)
-    {
-        input = readline("minishell> ");
-        if (!input)
-        {
-            write(1, "exit\n", 5);
-            break ;
-        }
-        if (*input)
-        {
-			tokens = tokenise(input);
-			print_tokens(tokens);
-            add_history(input);
-            execute_command(input, &env_struct);
-        }
-        free(input);
-    }
+    init_shell(&env, &fd_info, &is_interactive);
+    if (!env)
+        return (1);
+    shell_loop(env, &fd_info, is_interactive);
+    reset_signals();
+    free_env(env);
     return (0);
 }

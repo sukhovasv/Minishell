@@ -12,27 +12,35 @@
 
 #include "minishell.h"
 
-int is_builtin(char *cmd)
+int is_builtin(const char *cmd)
 {
-    return (ft_strncmp(cmd, "cd", 2) == 0 || ft_strncmp(cmd, "pwd", 3) == 0 || ft_strncmp(cmd, "echo", 4) == 0 ||
-            ft_strncmp(cmd, "exit", 4) == 0 || ft_strncmp(cmd, "export", 6) == 0 || ft_strncmp(cmd, "unset", 5) == 0 ||
+    return (ft_strncmp(cmd, "cd", 2) == 0 || 
+            ft_strncmp(cmd, "pwd", 3) == 0 || 
+            ft_strncmp(cmd, "echo", 4) == 0 ||
+            ft_strncmp(cmd, "exit", 4) == 0 || 
+            ft_strncmp(cmd, "export", 6) == 0 || 
+            ft_strncmp(cmd, "unset", 5) == 0 ||
             ft_strncmp(cmd, "env", 3) == 0);
 }
 
-void execute_builtin(char **argv, t_env *env_struct)
+int execute_builtin(char **argv, t_env *env)
 {
     if (ft_strncmp(argv[0], "cd", 2) == 0)
-        builtin_cd(argv);
+        return (builtin_cd(argv));
     else if (ft_strncmp(argv[0], "pwd", 3) == 0)
-        builtin_pwd();
+        return (builtin_pwd());
     else if (ft_strncmp(argv[0], "echo", 4) == 0)
-        builtin_echo(argv);
+        return (builtin_echo(argv));
     else if (ft_strncmp(argv[0], "export", 6) == 0)
-        builtin_export(argv, env_struct);
+        return (builtin_export(argv, env));
     else if (ft_strncmp(argv[0], "unset", 5) == 0)
-        builtin_unset(argv, env_struct);
+        return (builtin_unset(argv, env));
     else if (ft_strncmp(argv[0], "env", 3) == 0)
-        builtin_env(env_struct->env);
+        return (builtin_env(env->environ));
     else if (ft_strncmp(argv[0], "exit", 4) == 0)
-        exit(0);
+    {
+        // TODO: Добавить обработку аргумента exit
+        return (builtin_exit(argv));
+    }
+    return (1);
 }
