@@ -42,7 +42,7 @@ static int execute_external_command(t_ast_node *node, t_fd_info *fd_info)
 int execute_command_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
     if (!handle_command_redirections(node, fd_info, env))
-        return 1;
+		return 0;
         
     if (!node->args || !node->args[0])
         return 0;
