@@ -23,7 +23,8 @@ typedef struct s_ast_node
 } t_ast_node;
 
 // ast_redirects.c
-t_redirect  *create_redirect(t_token_type type, const char *file);
+//t_redirect  *create_redirect(t_token_type type, const char *file);
+t_redirect *create_redirect(t_token_type type, const char *file, t_token *token);
 int         add_redirect_to_list(t_redirect **redirects, t_redirect *new_redir);
 int         is_redirect_token(t_token_type type);
 void        free_redirects(t_redirect *redirects);  // Добавили эту строку

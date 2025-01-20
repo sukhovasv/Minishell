@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-static int handle_command_redirections(t_ast_node *node, t_fd_info *fd_info)
+static int handle_command_redirections(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 {
     if (node->redirects)
     {
-        if (!handle_redirections(node->redirects, fd_info))
+        if (!handle_redirections(node->redirects, fd_info, env, node))
             return 0;
     }
     return 1;
@@ -41,10 +41,12 @@ static int execute_external_command(t_ast_node *node, t_fd_info *fd_info)
 
 int execute_command_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
+    if (!handle_command_redirections(node, fd_info, env))
+        return 1;
+        
     if (!node->args || !node->args[0])
         return 0;
-    if (!handle_command_redirections(node, fd_info))
-        return 1;
+        
     if (is_builtin(node->args[0]))
         return execute_builtin_command(node, env, fd_info);
     return execute_external_command(node, fd_info);
@@ -117,7 +119,7 @@ int execute_ast_redirect_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
     if (node->redirects)
     {
-        if (!handle_redirections(node->redirects, fd_info))
+        if (!handle_redirections(node->redirects, fd_info, env, node))
             return 1;
     }
     return execute_ast_node(node->left, env, fd_info);

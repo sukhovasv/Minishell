@@ -25,7 +25,8 @@ SRC_FILES = \
 	$(SRC_DIR)/parser/ast_node_creation.c $(SRC_DIR)/parser/ast_args.c \
 	$(SRC_DIR)/parser/ast_parser_utilities.c $(SRC_DIR)/parser/ast_parser.c \
 	$(SRC_DIR)/parser/ast_utils.c $(SRC_DIR)/parser/ast_redirect.c \
-	$(SRC_DIR)/parser/handle_unclosed_quotes.c \
+	$(SRC_DIR)/parser/env_handler.c \
+#	$(SRC_DIR)/parser/handle_unclosed_quotes.c \
 #	$(SRC_DIR)/tokens/tokens.c \
 #	$(SRC_DIR)/tokens/special_char_token.c $(SRC_DIR)/tokens/tokenise.c \
 #	$(SRC_DIR)/tokens/tokenise_phrase.c \

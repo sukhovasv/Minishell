@@ -12,10 +12,12 @@ int initialize_single_heredoc(t_heredoc_data *heredoc, t_redirect *current)
 {
     heredoc->temp_file = create_temp_file();
     heredoc->delimiter = current->file;
+    heredoc->token = current->token;  // Добавляем эту строку
     if (!heredoc->temp_file)
         return 0;
     return 1;
 }
+
 
 int initialize_heredocs(t_redirect *redir, t_heredoc_data *heredocs)
 {

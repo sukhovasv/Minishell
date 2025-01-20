@@ -17,6 +17,7 @@ t_ast_node *handle_command_redirects(t_token **current,
                 cleanup_command(args, *redirects);
                 return (NULL);
             }
+            continue;  // Пропускаем increment в конце, так как мы уже сдвинули current
         }
         *current = (*current)->next;
     }
@@ -52,5 +53,5 @@ int process_redirect(t_token **current, t_token_type type,
     if (!*current || (*current)->type != TOKEN_WORD)
         return (0);
     return (add_redirect_to_list(redirects,
-        create_redirect(type, (*current)->value)));
+        create_redirect(type, (*current)->value, *current)));
 }

@@ -34,6 +34,11 @@ static t_token *new_token(t_token_type type, const char *value, size_t len)
         return (NULL);
     token->type = type;
     token->value = ft_strndup(value, len);
+	if ((value[0] == '\'' && value[len - 1] == '\'') || 
+        (value[0] == '"' && value[len - 1] == '"'))
+        token->has_quotes = 1; // Сохраняем, что токен был в кавычках
+    else
+        token->has_quotes = 0;
     if (!token->value)
     {
         free(token);
@@ -321,6 +326,41 @@ static t_token *handle_regular_token(const char *str, size_t len, t_env *env)
     return (token);
 }
 
+static int is_last_token_heredoc(t_token *tokens)
+{
+    t_token *last = NULL;
+    
+    if (!tokens)
+        return 0;
+    last = tokens;
+    while (last->next)
+        last = last->next;
+    return (last->type == TOKEN_REDIR_HEREDOC);
+}
+
+static int has_paired_quotes(const char *str, size_t len)
+{
+    char quote_char;
+    size_t i;  // Изменили тип с int на size_t
+    int found_first;
+
+    i = 0;
+    found_first = 0;
+    quote_char = 0;
+    while (i < len)
+    {
+        if ((str[i] == '"' || str[i] == '\'') && !found_first)
+        {
+            found_first = 1;
+            quote_char = str[i];
+        }
+        else if (found_first && str[i] == quote_char)
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
 static size_t handle_word(const char *str, t_token **tokens, t_env *env, t_parser_state *state)
 {
     size_t len;
@@ -332,7 +372,14 @@ static size_t handle_word(const char *str, t_token **tokens, t_env *env, t_parse
     if (str[0] == '$')
         token = handle_env_token(str, env);
     else
+    {
         token = handle_regular_token(str, len, env);
+        // Если предыдущий токен был heredoc, проверяем наличие парных кавычек где угодно
+        if (token && is_last_token_heredoc(*tokens))
+        {
+            token->has_quotes = has_paired_quotes(str, len);
+        }
+    }
     if (!token)
         return (0);
     add_token(tokens, token);

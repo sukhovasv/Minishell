@@ -44,7 +44,7 @@ static void handle_signal_child(int sig)
 }
 
 void setup_child_signals(void)
-{
+{;
     signal(SIGINT, handle_signal_child);
     signal(SIGQUIT, handle_signal_child);
 }
@@ -52,17 +52,24 @@ void setup_child_signals(void)
 void setup_parent_signals(void)
 {
     struct sigaction sa_int, sa_quit;
-
+    
     sa_int.sa_handler = handle_sigint;
     sigemptyset(&sa_int.sa_mask);
     sa_int.sa_flags = 0;
-    sigaction(SIGINT, &sa_int, NULL);
 
+    if (sigaction(SIGINT, &sa_int, NULL) == -1) {
+        perror("ERROR: sigaction SIGINT failed");
+        exit(1);
+    }
     sa_quit.sa_handler = handle_sigquit;
     sigemptyset(&sa_quit.sa_mask);
     sa_quit.sa_flags = 0;
-    sigaction(SIGQUIT, &sa_quit, NULL);
+    if (sigaction(SIGQUIT, &sa_quit, NULL) == -1) {
+        perror("ERROR: sigaction SIGQUIT failed");
+        exit(1);
+    }
 }
+
 
 void setup_signals(void)
 {

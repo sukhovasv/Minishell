@@ -19,7 +19,7 @@ static void init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
    extern char **environ;
 
    *env = init_env(environ);
-   setup_signals();
+	setup_signals();
    *is_interactive = isatty(STDIN_FILENO);
    fd_info->saved_stdout = -1;
    fd_info->saved_stdin = -1;
@@ -67,18 +67,21 @@ static void process_command(char *processed_input, t_env *env,
     }
 }
 
+static char *get_input_prompt(int is_interactive)
+{
+    if (is_interactive)
+        return readline("minishell> ");
+    return readline("");
+}
+
 static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 {
     char *input;
     int input_status;
-    int from_history;
 
     while (1)
     {
-        if (is_interactive)
-            input = readline("minishell> ");
-        else
-            input = readline("");
+        input = get_input_prompt(is_interactive);
         input_status = handle_input(input, is_interactive);
         if (input_status == 0)
             break;
@@ -86,19 +89,7 @@ static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
             continue;
         if (*input)
         {
-            from_history = (ft_strchr(input, '\n') != NULL);
-            if (from_history)
-                process_command(input, env, fd_info, is_interactive);
-            else
-            {
-                // Если новая команда, обрабатываем как обычно
-                char *processed = handle_unclosed_quotes(input);
-                if (processed)
-                {
-                    process_command(processed, env, fd_info, is_interactive);
-                    free(processed);
-                }
-            }
+            process_command(input, env, fd_info, is_interactive);
             free(input);
         }
         else

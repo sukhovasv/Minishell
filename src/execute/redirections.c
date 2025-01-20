@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int handle_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_info)
+static int handle_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
 {
     t_redirect *current = redirects;
     int status;
@@ -9,7 +9,7 @@ static int handle_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_info
     {
         if (current->type == TOKEN_REDIR_HEREDOC)
         {
-            status = handle_redir_heredoc(redirects, fd_info);
+            status = handle_redir_heredoc(redirects, fd_info, env, ast);
             if (!status)
                 return 0;
             break;
@@ -18,6 +18,7 @@ static int handle_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_info
     }
     return 1;
 }
+
 
 static int handle_non_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_info)
 {
@@ -43,12 +44,12 @@ static int handle_non_heredoc_redirections(t_redirect *redirects, t_fd_info *fd_
     return 1;
 }
 
-int handle_redirections(t_redirect *redirects, t_fd_info *fd_info)
+int handle_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
 {
     fd_info->saved_stdout = -1;
     fd_info->saved_stdin = -1;
 
-    if (!handle_heredoc_redirections(redirects, fd_info))
+    if (!handle_heredoc_redirections(redirects, fd_info, env, ast))
         return (0);
     if (!handle_non_heredoc_redirections(redirects, fd_info))
         return (0);
