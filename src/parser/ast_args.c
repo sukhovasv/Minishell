@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int count_args(t_token *tokens)
+/*int count_args(t_token *tokens)
 {
     int count;
     t_token *curr;
@@ -15,6 +15,27 @@ int count_args(t_token *tokens)
             curr = curr->next;
         curr = curr->next;
     }
+    return (count);
+}*/
+
+int count_args(t_token *tokens)
+{
+    int count;
+    t_token *curr;
+
+    printf("DEBUG: Starting count_args\n");
+    count = 0;
+    curr = tokens;
+    while (curr && curr->type != TOKEN_PIPE)
+    {
+        printf("DEBUG: Token type: %d, value: %s\n", curr->type, curr->value);
+        if (curr->type == TOKEN_WORD)
+            count++;
+        else if (is_redirect_token(curr->type))
+            curr = curr->next;
+        curr = curr->next;
+    }
+    printf("DEBUG: Final count: %d\n", count);
     return (count);
 }
 

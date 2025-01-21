@@ -10,7 +10,7 @@ int process_current_heredoc(t_heredoc_data *heredocs, t_redirect *current, int i
     return 1;
 }
 
-int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *env)
+/*int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *env)
 {
     int last_fd;
 
@@ -27,8 +27,27 @@ int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *en
         return -1;
     }
     return last_fd;
-}
+}*/
 
+int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *env)
+{
+    int last_fd;
+
+    if (!handle_signals_and_fork(heredocs, count, env))
+    {
+        cleanup_heredoc_files(heredocs, count);
+        return -1;
+    }
+
+    last_fd = open(heredocs[count - 1].temp_file, O_RDONLY);
+    if (last_fd == -1)
+    {
+        cleanup_heredoc_files(heredocs, count);
+        return -1;
+    }
+    cleanup_heredoc_files(heredocs, count);  // Добавляем cleanup здесь
+    return last_fd;
+}
 
 int fork_and_process_heredocs(t_heredoc_data *heredocs, int count, t_env *env)
 {

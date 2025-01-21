@@ -48,7 +48,7 @@ static int is_heredoc_without_command(t_redirect *redir, t_ast_node *ast)
 
 
 
-int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
+/*int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
 {
     t_heredoc_data *heredocs;
     int count;
@@ -74,6 +74,29 @@ int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_as
             cleanup_heredoc_files(heredocs, count);
             heredocs = NULL; 
         }
+        return (0);
+    }
+    setup_input_redirection(last_fd, fd_info);
+    return 1;
+}*/
+
+int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
+{
+    t_heredoc_data *heredocs;
+    int count;
+    int last_fd;
+
+    count = prepare_heredoc_data(redir, &heredocs);
+    if (count == 0)
+        return 0;
+
+    last_fd = process_and_open_last_heredoc(heredocs, count, env);
+    if (last_fd == -1)
+        return 0;
+    
+    if (is_heredoc_without_command(redir, ast))
+    {
+        close(last_fd);
         return (0);
     }
     setup_input_redirection(last_fd, fd_info);
