@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_ast_node *parse_simple_command(t_token **current)
+/*t_ast_node *parse_simple_command(t_token **current)
 {
     t_ast_node *node;
     t_redirect *redirects;
@@ -11,6 +11,31 @@ t_ast_node *parse_simple_command(t_token **current)
     redirects = NULL;
     start = *current;
     arg_count = count_args(start);
+    args = create_args_array(arg_count);
+    if (!args)
+        return (NULL);
+    if (!copy_token_values(args, start, arg_count))
+    {
+        free_args_array(args);
+        return (NULL);
+    }
+    node = handle_command_redirects(current, args, &redirects);
+    return (node);
+}*/
+
+t_ast_node *parse_simple_command(t_token **current)
+{
+    t_ast_node *node;
+    t_redirect *redirects;
+    char **args;
+    int arg_count;
+    t_token *start;
+
+    printf("DEBUG: Starting parse_simple_command\n");
+    redirects = NULL;
+    start = *current;
+    arg_count = count_args(start);
+    printf("DEBUG: arg_count: %d\n", arg_count);
     args = create_args_array(arg_count);
     if (!args)
         return (NULL);

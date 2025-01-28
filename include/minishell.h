@@ -27,23 +27,12 @@
 # include <readline/history.h>
 # include "libft.h"
 
-// Debug макрос
-/*#ifdef DEBUG
-# define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
-#else
-# define DEBUG_PRINT(fmt, ...) (void)0
-#endif*/
-
 // Глобальные переменные
 extern volatile sig_atomic_t g_signal_received;
 
-/*// Константы для перенаправлений
-# define REDIR_IN        1
-# define REDIR_OUT       2
-# define REDIR_APPEND    3
-# define REDIR_HEREDOC   4*/
-
-// Базовые структуры
+typedef struct s_command {
+    char **argv;
+} t_command;
 
 typedef struct s_parser_state
 {
@@ -56,37 +45,6 @@ typedef struct s_env
     char    **environ;
     int     last_status;
 }   t_env;
-
-typedef struct s_redirect
-{
-    int                 type;
-    char                *file;
-    struct s_redirect   *next;
-}   t_redirect;
-
-typedef struct s_heredoc_data
-{
-    char    **lines;  // массив строк для хранения содержимого
-    int     count;    // количество строк
-    int     capacity; //размер массива
-    char    *content;
-    char    *temp_file;
-    int     temp_fd;
-    char    *delimiter;
-} t_heredoc_data;
-
-typedef struct s_heredoc
-{
-    char    *content;
-    char    *temp_file;
-    int     temp_fd;
-}   t_heredoc;
-
-typedef struct s_fd_info
-{
-    int saved_stdout;
-    int saved_stdin;
-} t_fd_info;
 
 typedef enum e_token_type
 {
@@ -103,7 +61,42 @@ typedef struct s_token
     t_token_type        type;
     char                *value;
     struct s_token      *next;
+	int has_quotes;
 }   t_token;
+
+typedef struct s_redirect
+{
+    int                 type;
+    char                *file;
+    struct s_redirect   *next;
+	t_token *token;
+}   t_redirect;
+
+typedef struct s_heredoc_data
+{
+    char    **lines;  // массив строк для хранения содержимого
+    int     count;    // количество строк
+    int     capacity; //размер массива
+    char    *content;
+    char    *temp_file;
+    int     temp_fd;
+    char    *delimiter;
+	int		expand_vars;
+	t_token *token;
+} t_heredoc_data;
+
+typedef struct s_heredoc
+{
+    char    *content;
+    char    *temp_file;
+    int     temp_fd;
+}   t_heredoc;
+
+typedef struct s_fd_info
+{
+    int saved_stdout;
+    int saved_stdin;
+} t_fd_info;
 
 typedef struct s_quote_state {
     int     in_quotes;
@@ -135,7 +128,7 @@ t_ast_node *parse_command(const char *input, t_env *env);
 //void free_command(t_command *cmd);
 const char *token_type_to_string(t_token_type type);
 int is_word_char(char c);
-char *handle_unclosed_quotes(const char *input);
+//char *handle_unclosed_quotes(const char *input);
 //int is_delimiter(char c);
 
 
@@ -143,7 +136,7 @@ char *handle_unclosed_quotes(const char *input);
 int execute_command(char *input, t_env *env);
 int is_builtin(const char *cmd);
 int execute_builtin(char **argv, t_env *env);
-int handle_redirections(t_redirect *redirects, t_fd_info *fd_info); // В minishell.h
+//int handle_redirections(t_redirect *redirects, t_fd_info *fd_info); // В minishell.h
 int execute_non_builtin(char **argv, t_env *env);
 int  try_execute(char *cmd, char **argv, char **envp);
 char *get_path_env(char **argv);
@@ -153,7 +146,7 @@ void search_and_execute(char **argv, char **envp);
 int	handle_redir_append(t_redirect *redir, int *saved_stdout);
 int	handle_redir_output(t_redirect *redir, int *saved_stdout);
 int	handle_redir_input(t_redirect *redir, int *saved_stdin);
-int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info);
+//int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info);
 char *get_env_value(const char *str, t_env *env);
 
 // Встроенные команды
@@ -197,25 +190,47 @@ int         handle_redir_append(t_redirect *redir, int *saved_stdout);
 //int handle_redirections(t_redirect *redirects, t_fd_info *fd_info);
 void restore_redirections(t_fd_info *fd_info);
 
-int handle_signals_and_fork(t_heredoc_data *heredocs, int count);
-int process_heredocs_in_child(t_heredoc_data *heredocs, int count);
-int fork_and_process_heredocs(t_heredoc_data *heredocs, int count);
+//int handle_signals_and_fork(t_heredoc_data *heredocs, int count);
+//int process_heredocs_in_child(t_heredoc_data *heredocs, int count);
+//int fork_and_process_heredocs(t_heredoc_data *heredocs, int count);
 void cleanup_heredoc_files(t_heredoc_data *heredocs, int count);
 int free_initialized_heredocs(t_heredoc_data *heredocs, int count);
 int open_temp_file(const char *temp_file);
 int is_end_of_heredoc(const char *line, const char *delimiter);
-int read_and_write_lines(int fd, t_heredoc_data *data);
+//int read_and_write_lines(int fd, t_heredoc_data *data);
 void setup_input_redirection(int last_fd, t_fd_info *fd_info);
 int process_current_heredoc(t_heredoc_data *heredocs, t_redirect *current, int i);
-int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count);
-int fork_and_process_heredocs(t_heredoc_data *heredocs, int count);
-int process_heredocs_in_child(t_heredoc_data *heredocs, int count);
+//int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count);
+//int fork_and_process_heredocs(t_heredoc_data *heredocs, int count);
+//int process_heredocs_in_child(t_heredoc_data *heredocs, int count);
 int allocate_heredoc_data(int count, t_heredoc_data **heredocs);
 int initialize_single_heredoc(t_heredoc_data *heredoc, t_redirect *current);
 int initialize_heredocs(t_redirect *redir, t_heredoc_data *heredocs);
 int prepare_heredoc_data(t_redirect *redir, t_heredoc_data **heredocs);
 char *create_temp_file(void);
-int write_single_heredoc(t_heredoc_data *data);
+//int write_single_heredoc(t_heredoc_data *data);
+int read_and_write_lines(int fd, t_heredoc_data *data, t_env *env);
+int write_single_heredoc(t_heredoc_data *data, t_env *env);
+int process_heredocs_in_child(t_heredoc_data *heredocs, int count, t_env *env);
+int fork_and_process_heredocs(t_heredoc_data *heredocs, int count, t_env *env);
+int handle_signals_and_fork(t_heredoc_data *heredocs, int count, t_env *env);
+int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *env);
+//int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env);
+//int handle_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env);
+int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast);
+int handle_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env, t_ast_node *ast);
+int init_pipe_execution(int *pipe_fd, int *original_stdin);
+int handle_heredoc_for_pipe(t_ast_node *node, int *heredoc_stdin, 
+                                 t_env *env, t_fd_info *fd_info, int *pipe_fd);
+int write_heredoc_to_pipe(int heredoc_fd, int pipe_fd);
+int handle_first_child(int heredoc_stdin, int *pipe_fd, t_ast_node *node, t_env *env, t_fd_info *fd_info);
+int handle_second_child(int pipe_fd, t_ast_node *node, 
+                             t_env *env, t_fd_info *fd_info);
+void cleanup_pipe_resources(int *pipe_fd, int heredoc_stdin, int original_stdin);
+int wait_for_pipe_children(pid_t pid1, pid_t pid2);
+int execute_first_child(pid_t *pid, int heredoc_stdin, int *pipe_fd, t_ast_node *node, t_env *env, t_fd_info *fd_info);
+int execute_second_child(pid_t *pid, int *pipe_fd, t_ast_node *node,
+                              t_env *env, t_fd_info *fd_info);
 
 /* Utils */
 void        restore_fds(int saved_stdout, int saved_stdin);

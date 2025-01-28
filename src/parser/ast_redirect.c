@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_redirect *create_redirect(t_token_type type, const char *file)
+t_redirect *create_redirect(t_token_type type, const char *file, t_token *token)  // добавляем параметр token
 {
     t_redirect *redir;
 
@@ -14,6 +14,7 @@ t_redirect *create_redirect(t_token_type type, const char *file)
         free(redir);
         return (NULL);
     }
+    redir->token = token;
     redir->next = NULL;
     return (redir);
 }
