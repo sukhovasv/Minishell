@@ -20,6 +20,7 @@ typedef struct s_ast_node
     struct s_ast_node    *right;         // Правый потомок
     char                 **args;         // Аргументы команды
     t_redirect           *redirects;     // Список редиректов
+	int					pipe_level;
 } t_ast_node;
 
 // ast_redirects.c

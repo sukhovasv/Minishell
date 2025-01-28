@@ -219,6 +219,18 @@ int process_and_open_last_heredoc(t_heredoc_data *heredocs, int count, t_env *en
 //int handle_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env);
 int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast);
 int handle_redirections(t_redirect *redirects, t_fd_info *fd_info, t_env *env, t_ast_node *ast);
+int init_pipe_execution(int *pipe_fd, int *original_stdin);
+int handle_heredoc_for_pipe(t_ast_node *node, int *heredoc_stdin, 
+                                 t_env *env, t_fd_info *fd_info, int *pipe_fd);
+int write_heredoc_to_pipe(int heredoc_fd, int pipe_fd);
+int handle_first_child(int heredoc_stdin, int *pipe_fd, t_ast_node *node, t_env *env, t_fd_info *fd_info);
+int handle_second_child(int pipe_fd, t_ast_node *node, 
+                             t_env *env, t_fd_info *fd_info);
+void cleanup_pipe_resources(int *pipe_fd, int heredoc_stdin, int original_stdin);
+int wait_for_pipe_children(pid_t pid1, pid_t pid2);
+int execute_first_child(pid_t *pid, int heredoc_stdin, int *pipe_fd, t_ast_node *node, t_env *env, t_fd_info *fd_info);
+int execute_second_child(pid_t *pid, int *pipe_fd, t_ast_node *node,
+                              t_env *env, t_fd_info *fd_info);
 
 /* Utils */
 void        restore_fds(int saved_stdout, int saved_stdin);

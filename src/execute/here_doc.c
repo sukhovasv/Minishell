@@ -80,7 +80,7 @@ static int is_heredoc_without_command(t_redirect *redir, t_ast_node *ast)
     return 1;
 }*/
 
-int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
+/*int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
 {
     t_heredoc_data *heredocs;
     int count;
@@ -101,4 +101,91 @@ int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_as
     }
     setup_input_redirection(last_fd, fd_info);
     return 1;
+}*/
+
+int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
+{
+    t_heredoc_data *heredocs;
+    int count;
+    int last_fd;
+    
+    count = prepare_heredoc_data(redir, &heredocs);
+    if (count == 0)
+        return 0;
+
+    last_fd = process_and_open_last_heredoc(heredocs, count, env);
+    if (last_fd == -1)
+        return 0;
+    
+    if (is_heredoc_without_command(redir, ast))
+    {
+        close(last_fd);
+        return 0;
+    }
+
+    // Сохраняем текущий stdin если еще не сохранен
+    if (fd_info->saved_stdin == -1)
+        fd_info->saved_stdin = dup(STDIN_FILENO);
+
+    // Устанавливаем heredoc как stdin
+    if (dup2(last_fd, STDIN_FILENO) == -1)
+    {
+        close(last_fd);
+        return 0;
+    }
+    close(last_fd);
+
+    return 1;
 }
+
+/*int handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info, t_env *env, t_ast_node *ast)
+{
+    t_heredoc_data *heredocs = NULL;
+    int count;
+    int last_fd;
+    
+    count = prepare_heredoc_data(redir, &heredocs);
+    if (count == 0 || heredocs == NULL)
+        return 0;  // ❗ Если prepare_heredoc_data вернула NULL, ничего не освобождаем
+
+    last_fd = process_and_open_last_heredoc(heredocs, count, env);
+    if (last_fd == -1)
+    {
+        cleanup_heredoc_files(heredocs, count);
+        free(heredocs);
+        return 0;
+    }
+
+    if (is_heredoc_without_command(redir, ast))
+    {
+        close(last_fd);
+        cleanup_heredoc_files(heredocs, count);
+        free(heredocs);
+        return 0;
+    }
+
+    // Сохраняем stdin только один раз
+    if (fd_info->saved_stdin == -1)
+        fd_info->saved_stdin = dup(STDIN_FILENO);
+
+    if (dup2(last_fd, STDIN_FILENO) == -1)
+    {
+        perror("Failed to redirect heredoc to stdin");
+        close(last_fd);
+        cleanup_heredoc_files(heredocs, count);
+        free(heredocs);
+        return 0;
+    }
+
+    close(last_fd);
+
+    // ❗ Освобождаем память только один раз
+    if (heredocs)
+    {
+        cleanup_heredoc_files(heredocs, count);
+        free(heredocs);
+        heredocs = NULL;  // Защита от double free
+    }
+
+    return 1;
+}*/

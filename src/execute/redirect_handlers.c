@@ -57,7 +57,7 @@ int handle_redir_append(t_redirect *redir, int *saved_stdout)
     return (1);
 }
 
-void restore_redirections(t_fd_info *fd_info)
+/*void restore_redirections(t_fd_info *fd_info)
 {
     if (fd_info->saved_stdout != -1)
     {
@@ -65,6 +65,16 @@ void restore_redirections(t_fd_info *fd_info)
         close(fd_info->saved_stdout);
         fd_info->saved_stdout = -1;
     }
+    if (fd_info->saved_stdin != -1)
+    {
+        dup2(fd_info->saved_stdin, STDIN_FILENO);
+        close(fd_info->saved_stdin);
+        fd_info->saved_stdin = -1;
+    }
+}*/
+
+void restore_redirections(t_fd_info *fd_info)
+{
     if (fd_info->saved_stdin != -1)
     {
         dup2(fd_info->saved_stdin, STDIN_FILENO);
