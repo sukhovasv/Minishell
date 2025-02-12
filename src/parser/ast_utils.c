@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_ast_node *handle_command_redirects(t_token **current,
+/*t_ast_node *handle_command_redirects(t_token **current,
     char **args, t_redirect **redirects)
 {
     t_ast_node *node;
@@ -18,6 +18,32 @@ t_ast_node *handle_command_redirects(t_token **current,
                 return (NULL);
             }
             continue;  // Пропускаем increment в конце, так как мы уже сдвинули current
+        }
+        *current = (*current)->next;
+    }
+    node = create_command_node(args, *redirects);
+    if (!node)
+        cleanup_command(args, *redirects);
+    return (node);
+}*/
+
+t_ast_node *handle_command_redirects(t_token **current, char **args, t_redirect **redirects)
+{
+    t_ast_node *node;
+    t_token_type type;
+
+    while (*current && (*current)->type != TOKEN_PIPE)
+    {
+        if (is_redirect_token((*current)->type))
+        {
+            type = (*current)->type;
+            *current = (*current)->next;
+            if (!process_redirect(current, type, redirects))
+            {
+                cleanup_command(args, *redirects);
+                return (NULL);
+            }
+            continue;
         }
         *current = (*current)->next;
     }
@@ -47,11 +73,24 @@ void cleanup_command(char **args, t_redirect *redirects)
     free_redirects(redirects);
 }
 
-int process_redirect(t_token **current, t_token_type type,
+/*int process_redirect(t_token **current, t_token_type type,
     t_redirect **redirects)
 {
     if (!*current || (*current)->type != TOKEN_WORD)
         return (0);
     return (add_redirect_to_list(redirects,
         create_redirect(type, (*current)->value, *current)));
+}*/
+
+int process_redirect(t_token **current, t_token_type type, t_redirect **redirects)
+{
+    if (!*current || (*current)->type != TOKEN_WORD)
+    {
+        return 0;
+    }
+
+    t_redirect *new_redirect = create_redirect(type, (*current)->value, *current);
+
+    int result = add_redirect_to_list(redirects, new_redirect);
+    return result;
 }

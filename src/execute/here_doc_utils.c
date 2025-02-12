@@ -31,42 +31,8 @@ int is_end_of_heredoc(const char *line, const char *delimiter)
             ft_strlen(line) == ft_strlen(delimiter));
 }
 
-char *expand_env_variables(const char *input, t_env *env)
-{
-    char *result;
-    char *temp;
-    size_t i = 0;
-    size_t input_len = ft_strlen(input);
-    
-    result = ft_strdup("");  // Начинаем с пустой строки
-    if (!result)
-        return NULL;
 
-    while (i < input_len)
-    {
-        if (input[i] == '$' && (ft_isalpha(input[i + 1]) || input[i + 1] == '_'))
-        {
-            char *expanded_var = expand_env_var(input, &i, env); // Раскрываем $VAR
-            temp = ft_strjoin(result, expanded_var);
-            free(expanded_var);
-            free(result);
-            result = temp;
-        }
-        else
-        {
-            temp = ft_strndup(&input[i], 1);
-            char *new_result = ft_strjoin(result, temp);
-            free(temp);
-            free(result);
-            result = new_result;
-            i++;
-        }
-    }
-    return result;
-}
-
-
-int read_and_write_lines(int fd, t_heredoc_data *heredoc, t_env *env)
+/*int read_and_write_lines(int fd, t_heredoc_data *heredoc, t_env *env)
 {
     char *line;
     int expand_vars = 1;
@@ -94,6 +60,42 @@ int read_and_write_lines(int fd, t_heredoc_data *heredoc, t_env *env)
             char *expanded_line = expand_env_variables(line, env);
             free(line);
             line = expanded_line;
+        }
+
+        write(fd, line, ft_strlen(line));
+        write(fd, "\n", 1);
+        free(line);
+    }
+    return 0;
+}*/
+
+int read_and_write_lines(int fd, t_heredoc_data *data, t_env *env)
+{
+    char *line;
+    int expand_vars;
+
+    expand_vars = !(data->token && data->token->has_quotes);
+
+    while (1)
+    {
+        line = readline("> ");
+        if (!line || g_signal_received == SIGINT)
+        {
+            free(line);
+            return -1;
+        }
+
+        if (is_end_of_heredoc(line, data->delimiter))
+        {
+            free(line);
+            break;
+        }
+
+        if (expand_vars && ft_strchr(line, '$'))
+        {
+            char *expanded = expand_env_variables(line, env);
+            free(line);
+            line = expanded;
         }
 
         write(fd, line, ft_strlen(line));

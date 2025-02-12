@@ -45,3 +45,50 @@ void try_path_execution(char *path, char **argv, char **envp)
     try_paths(dirs, argv, envp);
     free_and_error(dirs, path, argv[0]);
 }
+
+char *find_command_in_path(char *cmd)
+{
+    char *path_env;
+    char **paths;
+    char *cmd_path;
+    int i;
+
+    path_env = getenv("PATH");
+    if (!path_env)
+        return (NULL);
+
+    paths = ft_split(path_env, ':');
+    if (!paths)
+        return (NULL);
+
+    i = 0;
+    while (paths[i])
+    {
+        cmd_path = ft_strjoin(paths[i], "/");
+        cmd_path = ft_strjoin(cmd_path, cmd);
+        if (access(cmd_path, X_OK) == 0)
+        {
+            // Освобождаем память для `paths`
+            int j = 0;
+            while (paths[j])
+            {
+                free(paths[j]);
+                j++;
+            }
+            free(paths);
+            return (cmd_path);
+        }
+        free(cmd_path);
+        i++;
+    }
+
+    // Освобождаем `paths`, если команда не найдена
+    int j = 0;
+    while (paths[j])
+    {
+        free(paths[j]);
+        j++;
+    }
+    free(paths);
+    return (NULL);
+}

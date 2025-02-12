@@ -1,28 +1,68 @@
 #include "minishell.h"
 
-void restore_fd_after_heredoc(t_fd_info *fd_info)
+static int handle_single_heredoc(t_redirect *redir, t_fd_info *fd_info)
 {
-    if (fd_info->saved_stdin != -1)
-    {
-        dup2(fd_info->saved_stdin, STDIN_FILENO);
-        close(fd_info->saved_stdin);
-        fd_info->saved_stdin = -1;
-    }
+    int fd;
+
+    if (!redir->token || !redir->token->temp_file)
+        return 0;
+
+    fd = open(redir->token->temp_file, O_RDONLY);
+    if (fd == -1)
+        return 0;
+
+    if (fd_info->saved_stdin == -1)
+        fd_info->saved_stdin = dup(STDIN_FILENO);
+
+    dup2(fd, STDIN_FILENO);
+    close(fd);
+
+    return 1;
 }
 
-static int handle_command_redirections(t_ast_node *node, t_fd_info *fd_info, t_env *env)
+static int handle_command_redirections(t_ast_node *node, t_fd_info *fd_info)
 {
-    if (node->redirects)
+    t_redirect *redir;
+
+    if (!node->redirects)
+        return 1;
+
+    redir = node->redirects;
+    while (redir)
     {
-        if (!handle_redirections(node->redirects, fd_info, env, node))
-            return 0;
+        if (redir->type == TOKEN_REDIR_HEREDOC)
+        {
+            if (!handle_single_heredoc(redir, fd_info))
+                return 0;
+        }
+        else if (redir->type == TOKEN_REDIR_IN)
+        {
+            if (!handle_redir_input(redir, &fd_info->saved_stdin))
+                return 0;
+        }
+        else if (redir->type == TOKEN_REDIR_OUT)
+        {
+            if (!handle_redir_output(redir, &fd_info->saved_stdout))
+                return 0;
+        }
+        else if (redir->type == TOKEN_REDIR_APPEND)
+        {
+            if (!handle_redir_append(redir, &fd_info->saved_stdout))
+                return 0;
+        }
+        redir = redir->next;
     }
     return 1;
 }
 
 static int execute_builtin_command(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
-    int status = execute_builtin(node->args, env);
+    int status;
+
+    if (!handle_command_redirections(node, fd_info))
+        return 1;
+
+    status = execute_builtin(node->args, env);
     restore_redirections(fd_info);
     return status;
 }
@@ -31,6 +71,9 @@ static int execute_external_command(t_ast_node *node, t_fd_info *fd_info)
 {
     pid_t pid;
     int status;
+
+    if (!handle_command_redirections(node, fd_info))
+        return 1;
 
     pid = fork();
     if (pid == -1)
@@ -44,322 +87,235 @@ static int execute_external_command(t_ast_node *node, t_fd_info *fd_info)
         ft_putstr_fd(": command not found\n", 2);
         exit(127);
     }
+
     waitpid(pid, &status, 0);
     restore_redirections(fd_info);
-    return status / 256; // Это эквивалентно (status >> 8)
+    return WEXITSTATUS(status);
 }
-
-/*int execute_command_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
-{
-    if (!handle_command_redirections(node, fd_info, env))
-		return 0;
-        
-    if (!node->args || !node->args[0])
-        return 0;
-        
-    if (is_builtin(node->args[0]))
-        return execute_builtin_command(node, env, fd_info);
-    return execute_external_command(node, fd_info);
-}*/
 
 int execute_command_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
     int status;
 
-    if (!handle_command_redirections(node, fd_info, env))
-        return 0;
-        
     if (!node->args || !node->args[0])
         return 0;
-        
+
     if (is_builtin(node->args[0]))
         status = execute_builtin_command(node, env, fd_info);
     else
         status = execute_external_command(node, fd_info);
 
-    restore_fd_after_heredoc(fd_info);  // Добавляем здесь
     return status;
 }
 
-/*static void setup_pipe_child(int pipe_fd[2], int is_first)
+static int handle_pipe_redirect_out(t_redirect *redir)
 {
-    if (is_first)
+    int fd;
+
+    ft_putstr_fd("\n[DEBUG] Handling pipe redirect out for file: ", 2);
+    ft_putstr_fd(redir->file, 2);
+    ft_putstr_fd("\n", 2);
+
+    if (redir->type == TOKEN_REDIR_OUT)
     {
-        close(pipe_fd[0]);
-        dup2(pipe_fd[1], STDOUT_FILENO);
-        close(pipe_fd[1]);
+        ft_putstr_fd("[DEBUG] Opening file in TRUNC mode\n", 2);
+        fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    }
+    else if (redir->type == TOKEN_REDIR_APPEND)
+    {
+        ft_putstr_fd("[DEBUG] Opening file in APPEND mode\n", 2);
+        fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
     }
     else
-    {
-        close(pipe_fd[1]);
-        dup2(pipe_fd[0], STDIN_FILENO);
-        close(pipe_fd[0]);
-    }
-}
+        return 1;
 
-static int setup_pipe_and_fork(int pipe_fd[2])
-{
-    if (pipe(pipe_fd) == -1)
+    if (fd == -1)
+    {
+        ft_putstr_fd("[DEBUG] Failed to open file\n", 2);
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(redir->file, 2);
+        ft_putstr_fd(": Permission denied\n", 2);
         return 0;
-    return 1;
-}*/
+    }
 
-static void close_pipe_fds(int pipe_fd[2])
-{
-    close(pipe_fd[0]);
-    close(pipe_fd[1]);
+    ft_putstr_fd("[DEBUG] File opened successfully, fd=", 2);
+    char fd_str[20];
+    sprintf(fd_str, "%d", fd);
+    ft_putstr_fd(fd_str, 2);
+    ft_putstr_fd("\n", 2);
+
+    // Настраиваем редирект
+    if (dup2(fd, STDOUT_FILENO) == -1)
+    {
+        ft_putstr_fd("[DEBUG] Failed to redirect stdout\n", 2);
+        close(fd);
+        return 0;
+    }
+
+    close(fd);
+    return 1;
 }
 
-/*static int wait_for_pipe_processes(pid_t pid1, pid_t pid2)
+static void execute_command_in_pipe(t_ast_node *cmd, t_env *env, t_fd_info *fd_info)
 {
-    int status2;
+    ft_putstr_fd("\n[DEBUG] Entering execute_command_in_pipe\n", 2);
 
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, &status2, 0);
-
-    return ((status2 >> 8) & 0xff); // Возвращаем статус последнего процесса
-}*/
-
-/*int execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
-{
-    int pipe_fd[2];
-
-    if (!setup_pipe_and_fork(pipe_fd))
-        return 1;
-    pid_t pid1 = fork();
-    if (pid1 == 0)
+    if (!cmd || !cmd->args || !cmd->args[0])
     {
-        setup_pipe_child(pipe_fd, 1);
-        int status1 = execute_ast_node(node->left, env, fd_info);
-        exit(status1);
-    }
-    pid_t pid2 = fork();
-    if (pid2 == 0)
-    {
-        setup_pipe_child(pipe_fd, 0);
-        int status2 = execute_ast_node(node->right, env, fd_info);
-        exit(status2);
-    }
-    close_pipe_fds(pipe_fd);
-    return wait_for_pipe_processes(pid1, pid2);
-}*/
-
-/*int execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
-{
-    int pipe_fd[2];
-    pid_t pid1, pid2;
-    int status;
-
-    if (pipe(pipe_fd) == -1)
-        return 1;
-
-    // Первый процесс (левая часть пайпа)
-    pid1 = fork();
-    if (pid1 == -1)
-    {
-        close_pipe_fds(pipe_fd);
-        return 1;
-    }
-    if (pid1 == 0)
-    {
-        close(pipe_fd[0]);
-        dup2(pipe_fd[1], STDOUT_FILENO);
-        close(pipe_fd[1]);
-        exit(execute_ast_node(node->left, env, fd_info));
+        ft_putstr_fd("[DEBUG] Invalid command\n", 2);
+        _exit(1);
     }
 
-    // Второй процесс (правая часть пайпа)
-    pid2 = fork();
-    if (pid2 == -1)
+    ft_putstr_fd("[DEBUG] Executing command: ", 2);
+    ft_putstr_fd(cmd->args[0], 2);
+    ft_putstr_fd("\n", 2);
+
+    // Обрабатываем все редиректы
+    if (cmd->redirects)
     {
-        close_pipe_fds(pipe_fd);
-        kill(pid1, SIGTERM);
-        waitpid(pid1, NULL, 0);
-        return 1;
-    }
-    if (pid2 == 0)
-    {
-        close(pipe_fd[1]);
-        dup2(pipe_fd[0], STDIN_FILENO);
-        close(pipe_fd[0]);
-        exit(execute_ast_node(node->right, env, fd_info));
+        ft_putstr_fd("[DEBUG] Processing redirects\n", 2);
+        t_redirect *redir = cmd->redirects;
+        
+        // Обрабатываем heredoc и input редиректы
+        while (redir)
+        {
+            if (redir->type == TOKEN_REDIR_HEREDOC || redir->type == TOKEN_REDIR_IN)
+            {
+                ft_putstr_fd("[DEBUG] Processing heredoc/input redirect\n", 2);
+                if (!handle_command_redirections(cmd, fd_info))
+                {
+                    ft_putstr_fd("[DEBUG] Failed to handle heredoc/input redirect\n", 2);
+                    _exit(1);
+                }
+                break;
+            }
+            redir = redir->next;
+        }
+
+        // Затем обрабатываем редиректы вывода
+        redir = cmd->redirects;
+        while (redir)
+        {
+            if (redir->type == TOKEN_REDIR_OUT || redir->type == TOKEN_REDIR_APPEND)
+            {
+                ft_putstr_fd("[DEBUG] Processing output redirect\n", 2);
+                if (!handle_pipe_redirect_out(redir))
+                {
+                    ft_putstr_fd("[DEBUG] Failed to handle output redirect\n", 2);
+                    _exit(1);
+                }
+            }
+            redir = redir->next;
+        }
     }
 
-    // Родительский процесс
-    close_pipe_fds(pipe_fd);
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, &status, 0);
-    return WEXITSTATUS(status);
-}*/
+    if (is_builtin(cmd->args[0]))
+    {
+        ft_putstr_fd("[DEBUG] Executing builtin command\n", 2);
+        int status = execute_builtin(cmd->args, env);
+        ft_putstr_fd("[DEBUG] Builtin execution completed with status: ", 2);
+        char status_str[10];
+        sprintf(status_str, "%d", status);
+        ft_putstr_fd(status_str, 2);
+        ft_putstr_fd("\n", 2);
+        _exit(status);
+    }
+
+    ft_putstr_fd("[DEBUG] Executing external command\n", 2);
+    setup_child_signals();
+    execvp(cmd->args[0], cmd->args);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(cmd->args[0], 2);
+    ft_putstr_fd(": command not found\n", 2);
+    _exit(127);
+}
 
 int execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
-   int pipe_fd[2];
-   pid_t pid1, pid2;
-   int status;
-   int heredoc_stdin = -1;
-   int original_stdin = dup(STDIN_FILENO);
+    int pipefd[2];
+    pid_t pid1, pid2;
+    int status;
 
-   if (original_stdin == -1)
-   {
-       perror("Failed to save original stdin");
-       return 1;
-   }
+    ft_putstr_fd("\n[DEBUG] Entering execute_pipe_node\n", 2);
 
-   if (pipe(pipe_fd) == -1)
-   {
-       perror("pipe failed");
-       close(original_stdin);
-       return 1;
-   }
-
-   // Обрабатываем heredoc перед fork()
-   if (node->left && node->left->redirects)
-   {
-       t_redirect *redir = node->left->redirects;
-       while (redir)
-       {
-           if (redir->type == TOKEN_REDIR_HEREDOC)
-           {
-               if (!handle_redir_heredoc(redir, fd_info, env, node->left))
-               {
-                   close_pipe_fds(pipe_fd);
-                   close(original_stdin);
-                   return 1;
-               }
-               heredoc_stdin = dup(STDIN_FILENO);
-               printf("DEBUG: Saved heredoc content to fd %d\n", heredoc_stdin);
-               if (heredoc_stdin == -1)
-               {
-                   close_pipe_fds(pipe_fd);
-                   close(original_stdin);
-                   return 1;
-               }
-               break;
-           }
-           redir = redir->next;
-       }
-   }
-
-   if (dup2(original_stdin, STDIN_FILENO) == -1)
-   {
-       close_pipe_fds(pipe_fd);
-       if (heredoc_stdin != -1)
-           close(heredoc_stdin);
-       close(original_stdin);
-       return 1;
-   }
-   close(original_stdin);
-
-   pid1 = fork();
-   if (pid1 == -1)
-   {
-       perror("First fork failed");
-       if (heredoc_stdin != -1)
-           close(heredoc_stdin);
-       close_pipe_fds(pipe_fd);
-       return 1;
-   }
-
-   if (pid1 == 0)  // Первый дочерний процесс
-   {
-       close(pipe_fd[0]);
-
-       if (heredoc_stdin != -1)
-       {
-           printf("DEBUG: Child 1: Restoring heredoc content from fd %d\n", heredoc_stdin);
-           if (dup2(heredoc_stdin, STDIN_FILENO) == -1)
-           {
-               perror("Failed to redirect heredoc stdin");
-               close(heredoc_stdin);
-               exit(1);
-           }
-           close(heredoc_stdin);
-           
-           // Читаем и передаем данные через pipe
-           char buf[1024];
-           ssize_t n;
-           while ((n = read(STDIN_FILENO, buf, sizeof(buf))) > 0)
-           {
-               if (write(pipe_fd[1], buf, n) != n)
-               {
-                   perror("Write to pipe failed");
-                   exit(1);
-               }
-           }
-       }
-
-       close(pipe_fd[1]);
-       printf("DEBUG: Child 1: Execution complete\n");
-       exit(0);
-   }
-
-   // Родительский процесс ждет завершения записи первого процесса
-   close(pipe_fd[1]);
-   if (heredoc_stdin != -1)
-       close(heredoc_stdin);
-
-   pid2 = fork();
-   if (pid2 == -1)
-   {
-       perror("Second fork failed");
-       close(pipe_fd[0]);
-       kill(pid1, SIGTERM);
-       waitpid(pid1, NULL, 0);
-       return 1;
-   }
-
-   if (pid2 == 0)  // Второй дочерний процесс
-   {
-       printf("DEBUG: Child 2: Setting up pipe input\n");
-       
-       if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
-       {
-           perror("Failed to redirect pipe to stdin");
-           exit(1);
-       }
-       close(pipe_fd[0]);
-
-       printf("DEBUG: Child 2: Executing wc\n");
-       exit(execute_ast_node(node->right, env, fd_info));
-   }
-
-   // Родительский процесс
-   close(pipe_fd[0]);
-
-   // Ждем завершения обоих процессов
-   waitpid(pid1, &status, 0);
-   printf("DEBUG: Child 1 (cat) exited with status %d\n", WIFEXITED(status) ? WEXITSTATUS(status) : status);
-   
-   int status2;
-   waitpid(pid2, &status2, 0);
-   printf("DEBUG: Child 2 (wc) exited with status %d\n", WIFEXITED(status2) ? WEXITSTATUS(status2) : status2);
-
-   return WIFEXITED(status2) ? WEXITSTATUS(status2) : status2;
-}
-
-
-/*int execute_ast_redirect_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
-{
-    if (node->redirects)
+    if (pipe(pipefd) == -1)
     {
-        if (!handle_redirections(node->redirects, fd_info, env, node))
-            return 1;
+        ft_putstr_fd("[DEBUG] Failed to create pipe\n", 2);
+        return (1);
     }
-    return execute_ast_node(node->left, env, fd_info);
-}*/
+
+    ft_putstr_fd("[DEBUG] Created pipe: read=", 2);
+    char fd_str[20];
+    sprintf(fd_str, "%d", pipefd[0]);
+    ft_putstr_fd(fd_str, 2);
+    ft_putstr_fd(", write=", 2);
+    sprintf(fd_str, "%d", pipefd[1]);
+    ft_putstr_fd(fd_str, 2);
+    ft_putstr_fd("\n", 2);
+
+    // Сначала создаем оба процесса
+    pid1 = fork();
+    if (pid1 < 0)
+    {
+        ft_putstr_fd("[DEBUG] First fork failed\n", 2);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return (1);
+    }
+
+    if (pid1 == 0)
+    {
+        ft_putstr_fd("[DEBUG] In first child process\n", 2);
+        close(pipefd[0]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+        execute_command_in_pipe(node->left, env, fd_info);
+    }
+
+    pid2 = fork();
+    if (pid2 < 0)
+    {
+        ft_putstr_fd("[DEBUG] Second fork failed\n", 2);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        kill(pid1, SIGTERM);
+        waitpid(pid1, NULL, 0);
+        return (1);
+    }
+
+    if (pid2 == 0)
+    {
+        ft_putstr_fd("[DEBUG] In second child process\n", 2);
+        close(pipefd[1]);
+        dup2(pipefd[0], STDIN_FILENO);
+        close(pipefd[0]);
+        if (node->right->type == AST_PIPE)
+            execute_pipe_node(node->right, env, fd_info);
+        else
+            execute_command_in_pipe(node->right, env, fd_info);
+    }
+
+    // Родительский процесс закрывает оба конца пайпа
+    close(pipefd[0]);
+    close(pipefd[1]);
+    
+    // Ждем завершения обоих процессов
+    waitpid(pid1, NULL, 0);
+    waitpid(pid2, &status, 0);
+    
+    ft_putstr_fd("[DEBUG] Pipe execution completed\n", 2);
+    return WEXITSTATUS(status);
+}
 
 int execute_ast_redirect_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
     int status;
 
-    if (node->redirects)
-    {
-        if (!handle_redirections(node->redirects, fd_info, env, node))
-            return 1;
-    }
+    if (!handle_command_redirections(node, fd_info))
+        return 1;
+
     status = execute_ast_node(node->left, env, fd_info);
-    restore_fd_after_heredoc(fd_info);  // Добавляем здесь
+    restore_redirections(fd_info);
     return status;
 }
 
@@ -367,11 +323,13 @@ int execute_ast_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
     if (!node)
         return 1;
+        
     if (node->type == AST_COMMAND)
         return execute_command_node(node, env, fd_info);
     else if (node->type == AST_PIPE)
         return execute_pipe_node(node, env, fd_info);
     else if (node->type == AST_REDIRECT)
         return execute_ast_redirect_node(node, env, fd_info);
-    return (1);
+        
+    return 1;
 }

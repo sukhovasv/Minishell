@@ -22,21 +22,19 @@ int count_args(t_token *tokens)
 {
     int count;
     t_token *curr;
-
-    printf("DEBUG: Starting count_args\n");
+    
     count = 0;
     curr = tokens;
     while (curr && curr->type != TOKEN_PIPE)
     {
-        printf("DEBUG: Token type: %d, value: %s\n", curr->type, curr->value);
         if (curr->type == TOKEN_WORD)
             count++;
         else if (is_redirect_token(curr->type))
-            curr = curr->next;
+            if (curr->next)  // Пропускаем аргумент редиректа
+                curr = curr->next;
         curr = curr->next;
     }
-    printf("DEBUG: Final count: %d\n", count);
-    return (count);
+    return count;
 }
 
 char **create_args_array(int count)

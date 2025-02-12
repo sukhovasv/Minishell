@@ -1,99 +1,186 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/16 12:51:24 by ssukhova          #+#    #+#             */
-/*   Updated: 2024/07/16 12:52:01 by ssukhova         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "../include/minishell.h"
+#include "minishell.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
 static void init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
 {
-   extern char **environ;
+    extern char **environ;
 
-   *env = init_env(environ);
-	setup_signals();
-   *is_interactive = isatty(STDIN_FILENO);
-   fd_info->saved_stdout = -1;
-   fd_info->saved_stdin = -1;
+    *env = init_env(environ);
+    setup_signals();
+    *is_interactive = isatty(STDIN_FILENO);
+    fd_info->saved_stdout = -1;
+    fd_info->saved_stdin = -1;
 }
 
-static int handle_input(char *input, int is_interactive)
+/*static void init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
 {
-   if (!input)
-   {
-       if (g_signal_received != SIGINT)
-       {
-           if (is_interactive)
-               write(1, "exit\n", 5);
-           return (0);
-       }
-       g_signal_received = 0;
-       return (1);
-   }
-   return (2);
+    extern char **environ;
+
+    *env = init_env(environ);
+    setup_signals();
+    *is_interactive = isatty(STDIN_FILENO);  // Возвращаемся к простой проверке
+    fd_info->saved_stdout = -1;
+    fd_info->saved_stdin = -1;
+}*/
+
+/*static char *get_input_prompt(int is_interactive)
+{
+    if (is_interactive)
+        return readline("minishell> ");
+    return readline("");
+}*/
+
+/*static char *get_input_prompt(int is_interactive)
+{
+    char *input = NULL;
+
+    if (is_interactive)
+        input = readline("minishell> ");
+    else
+        input = readline("");
+
+    return input;
+}*/
+
+/*static char *get_input_prompt(int is_interactive)
+{
+    // В неинтерактивном режиме не показываем промпт
+    if (!is_interactive)
+        return readline("");
+    return readline("minishell> ");
+}*/
+
+static char *get_input_prompt(int is_interactive)
+{
+    char *line = NULL;
+    char buf[4096];
+    
+    if (!is_interactive) {
+        // Читаем напрямую из stdin без использования readline
+        if (fgets(buf, sizeof(buf), stdin)) {
+            size_t len = strlen(buf);
+            if (len > 0 && buf[len-1] == '\n')
+                buf[len-1] = '\0';
+            line = strdup(buf);
+        }
+        return line;
+    }
+    
+    return readline("minishell> ");
 }
 
-static void process_command(char *processed_input, t_env *env, 
-                          t_fd_info *fd_info, int is_interactive)
+/*static char *get_input_prompt(int is_interactive)
+{
+    char *line;
+    static int heredoc_mode = 0;  // Флаг для отслеживания режима heredoc
+
+    if (!is_interactive) {
+        line = readline("");  // Вернемся к readline даже в неинтерактивном режиме
+        if (line && strstr(line, "<<")) {
+            heredoc_mode = 1;
+        } else if (heredoc_mode && line && strchr(line, '>')) {
+            printf("> ");  // Только в heredoc выводим промпт
+        }
+        return line;
+    }
+    
+    if (heredoc_mode) {
+        line = readline("> ");
+        if (line && strstr(line, "EOF")) {
+            heredoc_mode = 0;
+        }
+    } else {
+        line = readline("minishell> ");
+        if (line && strstr(line, "<<")) {
+            heredoc_mode = 1;
+        }
+    }
+    return line;
+}*/
+
+/*static void process_command(char *input, t_env *env, t_fd_info *fd_info, int is_interactive)
 {
     t_token *tokens;
     t_ast_node *ast;
     int status;
 
+    if (!input || !*input)
+        return;
+
     if (is_interactive)
-        add_history(processed_input);
+        add_history(input);
     
-    tokens = tokenize(processed_input, env);
+    tokens = tokenize(input, env);
     if (tokens)
     {
         ast = build_ast(tokens);
         if (ast)
         {
-            status = execute_ast_node(ast, env, fd_info); 
+            status = execute_ast_node(ast, env, fd_info);
             env->last_status = status;
-            if (g_signal_received)
-                handle_pending_signals();
+            free_ast_node(ast);
+        }
+        free_tokens(tokens);
+    }
+}*/
+
+static void process_command(char *input, t_env *env, t_fd_info *fd_info, int is_interactive)
+{
+    t_token *tokens;
+    t_ast_node *ast;
+    int status;
+
+    if (!input || !*input)
+        return;
+
+    // Убираем это условие, чтобы команда не добавлялась в историю при неинтерактивном режиме
+    if (is_interactive)
+        add_history(input);
+    
+    tokens = tokenize(input, env);
+    if (tokens)
+    {
+        ast = build_ast(tokens);
+        if (ast)
+        {
+            status = execute_ast_node(ast, env, fd_info);
+            env->last_status = status;
             free_ast_node(ast);
         }
         free_tokens(tokens);
     }
 }
 
-static char *get_input_prompt(int is_interactive)
-{
-    if (is_interactive)
-        return readline("minishell> ");
-    return readline("");
-}
-
 static void shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 {
     char *input;
-    int input_status;
 
     while (1)
     {
         input = get_input_prompt(is_interactive);
-        input_status = handle_input(input, is_interactive);
-        if (input_status == 0)
+        
+        if (!input)
+        {
+            printf("\n");
             break;
-        if (input_status == 1)
+        }
+
+        if (g_signal_received == SIGINT)
+        {
+            g_signal_received = 0;
+            free(input);
             continue;
+        }
+
         if (*input)
         {
             process_command(input, env, fd_info, is_interactive);
-            free(input);
+            rl_set_prompt("");    // Сбрасываем промпт
+            rl_already_prompted = 0;  // Сбрасываем флаг промпта
         }
-        else
-            free(input);
+        
+        free(input);
     }
 }
 
@@ -102,12 +189,18 @@ int main(void)
     t_env *env;
     t_fd_info fd_info;
     int is_interactive;
+    struct termios original;
 
+    tcgetattr(STDIN_FILENO, &original);
     init_shell(&env, &fd_info, &is_interactive);
     if (!env)
-        return (1);
+        return 1;
+
     shell_loop(env, &fd_info, is_interactive);
-    reset_signals();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &original);
+    rl_clear_history();
     free_env(env);
-    return (0);
+
+    return 0;
 }
