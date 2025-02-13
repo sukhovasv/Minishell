@@ -38,9 +38,6 @@ int execute_builtin(char **argv, t_env *env)
     else if (ft_strncmp(argv[0], "env", 3) == 0)
         return (builtin_env(env->environ));
     else if (ft_strncmp(argv[0], "exit", 4) == 0)
-    {
-        // TODO: Добавить обработку аргумента exit
         return (builtin_exit(argv));
-    }
     return (1);
 }

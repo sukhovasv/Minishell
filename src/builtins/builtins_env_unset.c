@@ -26,26 +26,6 @@ void remove_variable(t_env *env_struct, const char *key)
     }
 }
 
-int count_env_vars(char **env)
-{
-    int count;
-
-    count = 0;
-    while (env[count])
-        count++;
-    return (count);
-}
-
-char **allocate_new_environ(int env_size)
-{
-    char **new_environ;
-
-    new_environ = ft_calloc(env_size + 2, sizeof(char *));  // +1 для новой переменной, +1 для NULL
-    if (!new_environ)
-        return (NULL);
-    return (new_environ);
-}
-
 void copy_existing_vars(char **new_environ, char **old_environ, int env_size)
 {
     int i;

@@ -134,7 +134,6 @@ static void process_command(char *input, t_env *env, t_fd_info *fd_info, int is_
     if (!input || !*input)
         return;
 
-    // Убираем это условие, чтобы команда не добавлялась в историю при неинтерактивном режиме
     if (is_interactive)
         add_history(input);
     
@@ -199,7 +198,8 @@ int main(void)
     shell_loop(env, &fd_info, is_interactive);
 
     tcsetattr(STDIN_FILENO, TCSANOW, &original);
-    rl_clear_history();
+    //rl_clear_history();
+	clear_history();
     free_env(env);
 
     return 0;

@@ -1,23 +1,5 @@
 #include "minishell.h"
 
-/*int count_args(t_token *tokens)
-{
-    int count;
-    t_token *curr;
-
-    count = 0;
-    curr = tokens;
-    while (curr && curr->type != TOKEN_PIPE)
-    {
-        if (curr->type == TOKEN_WORD)
-            count++;
-        else if (is_redirect_token(curr->type))
-            curr = curr->next;
-        curr = curr->next;
-    }
-    return (count);
-}*/
-
 int count_args(t_token *tokens)
 {
     int count;
@@ -64,14 +46,8 @@ int copy_token_values(char **args, t_token *tokens, int count)
     return (1);
 }
 
-void    free_args_array(char **args)
+int is_redirect_token(t_token_type type)
 {
-    int i;
-
-    if (!args)
-        return ;
-    i = 0;
-    while (args[i])
-        free(args[i++]);
-    free(args);
+    return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT ||
+            type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_HEREDOC);
 }

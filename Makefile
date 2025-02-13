@@ -10,29 +10,23 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c $(SRC_DIR)/builtins/builtins.c \
-	$(SRC_DIR)/execute/execute_command.c $(SRC_DIR)/execute/execute_external.c \
-	$(SRC_DIR)/execute/path_utils.c $(SRC_DIR)/execute/redirections.c \
-	$(SRC_DIR)/execute/redirect_handlers.c $(SRC_DIR)/execute/here_doc.c \
-	$(SRC_DIR)/execute/here_doc_cleanup.c $(SRC_DIR)/execute/here_doc_utils.c \
-	$(SRC_DIR)/execute/here_doc_init.c $(SRC_DIR)/execute/here_doc_process.c \
-	$(SRC_DIR)/execute/utils_fd.c $(SRC_DIR)/execute/ast_executor.c\
-	$(SRC_DIR)/signals.c \
+	$(SRC_DIR)/main.c $(SRC_DIR)/environment/env_variables.c \
+	$(SRC_DIR)/executor/executor.c $(SRC_DIR)/executor/external_executor.c \
+	$(SRC_DIR)/executor/path_utils.c $(SRC_DIR)/executor/pipe_executor.c \
+	$(SRC_DIR)/heredoc/heredoc_handlers.c $(SRC_DIR)/heredoc/heredoc_init.c \
+	$(SRC_DIR)/heredoc/heredoc_cleanup.c $(SRC_DIR)/heredoc/heredoc_utils.c \
+	$(SRC_DIR)/heredoc/heredoc_process.c  \
+	$(SRC_DIR)/signals/signals.c \
+	$(SRC_DIR)/lexer/token_handlers.c $(SRC_DIR)/lexer/tokenizer.c \
 	$(SRC_DIR)/builtins/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins/builtins_env.c \
 	$(SRC_DIR)/builtins/builtins_export.c $(SRC_DIR)/builtins/builtins_utils.c \
 	$(SRC_DIR)/builtins/builtins_unset.c $(SRC_DIR)/builtins/builtins_env_utils.c \
-	$(SRC_DIR)/parser/parse_quotes.c $(SRC_DIR)/tokenize.c \
-	$(SRC_DIR)/parser/ast_node_creation.c $(SRC_DIR)/parser/ast_args.c \
-	$(SRC_DIR)/parser/ast_parser_utilities.c $(SRC_DIR)/parser/ast_parser.c \
-	$(SRC_DIR)/parser/ast_utils.c $(SRC_DIR)/parser/ast_redirect.c \
-	$(SRC_DIR)/parser/env_handler.c \
-#	$(SRC_DIR)/parser/handle_unclosed_quotes.c \
-#	$(SRC_DIR)/tokens/tokens.c \
-#	$(SRC_DIR)/tokens/special_char_token.c $(SRC_DIR)/tokens/tokenise.c \
-#	$(SRC_DIR)/tokens/tokenise_phrase.c \
-#	$(SRC_DIR)/validation/input_helper.c $(SRC_DIR)/validation/input_validator.c
-	
-
+	$(SRC_DIR)/builtins/builtins_export_no_arg.c $(SRC_DIR)/builtins/builtins.c \
+	$(SRC_DIR)/parser/ast_builder.c $(SRC_DIR)/parser/ast_cleanup.c \
+	$(SRC_DIR)/parser/ast_nodes.c $(SRC_DIR)/parser/ast_args.c \
+	$(SRC_DIR)/parser/ast_redirects.c \
+	$(SRC_DIR)/utils/fd_utils.c $(SRC_DIR)/utils/quote_handlers.c \
+	$(SRC_DIR)/utils/quote_utils.c $(SRC_DIR)/utils/redirect_handlers.c \
 
 # Object files
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
