@@ -10,18 +10,25 @@ SRC_DIR = ./src
 
 # Source files
 SRC_FILES = \
-	$(SRC_DIR)/main.c $(SRC_DIR)/environment/env_variables.c \
-	$(SRC_DIR)/executor/executor.c $(SRC_DIR)/executor/external_executor.c \
-	$(SRC_DIR)/executor/path_utils.c $(SRC_DIR)/executor/pipe_executor.c \
+	$(SRC_DIR)/main.c \
+	$(SRC_DIR)/executor/external_executor.c $(SRC_DIR)/executor/pipe_node_executor.c \
+	$(SRC_DIR)/executor/ast_executor.c $(SRC_DIR)/executor/redirections_executor.c \
+	$(SRC_DIR)/executor/pipe_command_executor.c \
 	$(SRC_DIR)/heredoc/heredoc_handlers.c $(SRC_DIR)/heredoc/heredoc_init.c \
-	$(SRC_DIR)/heredoc/heredoc_cleanup.c $(SRC_DIR)/heredoc/heredoc_utils.c \
-	$(SRC_DIR)/heredoc/heredoc_process.c  \
+	$(SRC_DIR)/heredoc/heredoc_utils.c $(SRC_DIR)/heredoc/heredoc_utils_2.c \
+	$(SRC_DIR)/heredoc/heredoc_process.c $(SRC_DIR)/heredoc/heredoc_content.c \
+	$(SRC_DIR)/heredoc/heredoc_temp_file.c $(SRC_DIR)/heredoc/heredoc_cleanup.c \
 	$(SRC_DIR)/signals/signals.c \
 	$(SRC_DIR)/lexer/token_handlers.c $(SRC_DIR)/lexer/tokenizer.c \
-	$(SRC_DIR)/builtins/builtins_cd_pwd_echo.c $(SRC_DIR)/builtins/builtins_env.c \
+	$(SRC_DIR)/lexer/token_basic.c $(SRC_DIR)/lexer/token_creation.c \
+	$(SRC_DIR)/lexer/token_env.c $(SRC_DIR)/lexer/token_operator.c \
+	$(SRC_DIR)/lexer/token_utils.c $(SRC_DIR)/lexer/token_word.c \
+	$(SRC_DIR)/builtins/builtins_echo_exit.c $(SRC_DIR)/builtins/builtins_cd_pwd.c \
+	$(SRC_DIR)/builtins/builtins_env.c $(SRC_DIR)/builtins/builtins_env_init.c \
 	$(SRC_DIR)/builtins/builtins_export.c $(SRC_DIR)/builtins/builtins_utils.c \
 	$(SRC_DIR)/builtins/builtins_unset.c $(SRC_DIR)/builtins/builtins_env_utils.c \
 	$(SRC_DIR)/builtins/builtins_export_no_arg.c $(SRC_DIR)/builtins/builtins.c \
+	$(SRC_DIR)/builtins/builtins_utils_2.c \
 	$(SRC_DIR)/parser/ast_builder.c $(SRC_DIR)/parser/ast_cleanup.c \
 	$(SRC_DIR)/parser/ast_nodes.c $(SRC_DIR)/parser/ast_args.c \
 	$(SRC_DIR)/parser/ast_redirects.c \

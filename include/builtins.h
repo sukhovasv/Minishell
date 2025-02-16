@@ -38,5 +38,9 @@ int is_valid_env_name(const char *str);
 size_t count_env_vars(char **env);
 int is_builtin(const char *cmd);
 int execute_builtin(char **argv, t_env *env);
+char	*process_value(char *value);
+char	*get_env_value(const char *var_name, t_env *env);
+char	*expand_env_var(const char *str, size_t *i, t_env *env);
+char	*expand_env_variables(const char *input, t_env *env);
 
 #endif

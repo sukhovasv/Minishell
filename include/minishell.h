@@ -29,7 +29,6 @@
 # include "types.h"
 # include "signals.h"
 # include "builtins.h"
-# include "environment.h"
 # include "executor.h"
 # include "heredoc.h"
 # include "lexer.h"

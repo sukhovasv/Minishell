@@ -65,7 +65,6 @@ void restore_redirections(t_fd_info *fd_info)
         close(fd_info->saved_stdin);
         fd_info->saved_stdin = -1;
     }
-    // Нужно добавить восстановление stdout
     if (fd_info->saved_stdout != -1)
     {
         dup2(fd_info->saved_stdout, STDOUT_FILENO);

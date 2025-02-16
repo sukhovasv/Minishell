@@ -14,20 +14,6 @@ char *extract_var_name(const char *input, int *i)
     return ft_strndup(&input[start], len);
 }
 
-/*char *find_env_value(const char *var_name, int len, t_env *env)
-{
-    int j;
-
-    j = 0;
-    while (env->environ[j])
-    {
-        if (ft_strncmp(env->environ[j], var_name, len) == 0 && env->environ[j][len] == '=')
-            return (ft_strdup(env->environ[j] + len + 1));
-        j++;
-    }
-    return (ft_strdup(""));
-}*/
-
 char *process_dollar(const char *input, int *i, t_env *env)
 {
     (*i)++;

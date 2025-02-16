@@ -19,9 +19,9 @@
 // Глобальные переменные
 extern volatile sig_atomic_t g_signal_received;
 
-typedef struct s_command {
+/*typedef struct s_command {
     char **argv;
-} t_command;
+} t_command;*/
 
 typedef struct s_parser_state
 {
@@ -132,5 +132,17 @@ typedef struct s_ast_node
     t_heredoc_data      *heredoc_data;   // новое поле
     int                 heredoc_count;    // новое поле
 } t_ast_node;
+
+typedef struct s_word_parser
+{
+    const char    *str;          // исходная строка
+    char          *result;       // результирующая строка
+    size_t        i;            // текущая позиция в исходной строке
+    size_t        j;            // текущая позиция в результате
+    size_t        len;          // длина исходной строки
+    int           in_quotes;    // флаг нахождения в кавычках
+    char          quote_char;   // текущий символ кавычек
+    t_env         *env;         // окружение
+} t_word_parser;
 
 #endif

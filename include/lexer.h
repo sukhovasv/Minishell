@@ -28,5 +28,18 @@ t_token	*new_token(t_token_type type, const char *value, size_t len);
 t_token	*tokenize(const char *input, t_env *env);
 char *find_env_value(const char *var_name, size_t len, t_env *env);
 t_token *create_heredoc_token(const char *str, size_t len, int *expand_vars);
+char	*process_token_value(const char *value, size_t len, int *has_quotes);
+void	update_index_after_env_var(t_word_parser *parser);
+void	init_tokenizer(t_token **tokens, size_t *i, t_parser_state *state);
+char	*create_word_without_quotes(const char *str, size_t len, t_env *env);
+char	*reallocate_result(char *result, char *env_val, size_t j,
+			size_t env_len);
+void	copy_env_value(char *result, const char *env_val, size_t *j);
+size_t	get_word_length(const char *str, int *in_quotes, char *quote_char);
+char	*handle_env_var(t_word_parser *parser);
+t_token	*handle_env_token(const char *str, t_env *env);
+t_token	*handle_regular_token(const char *str, size_t len, t_env *env);
+int	is_last_token_heredoc(t_token *tokens);
+int	has_paired_quotes(const char *str, size_t len);
 
 #endif

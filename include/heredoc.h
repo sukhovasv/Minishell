@@ -40,5 +40,6 @@ void setup_input_redirection(int last_fd, t_fd_info *fd_info);
 int has_any_quotes(const char *str);
 int should_expand_heredoc_vars(const char *delimiter);
 char *clean_delimiter(const char *str);
+int	init_heredoc_file(t_token *token);
 
 #endif
