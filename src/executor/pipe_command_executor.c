@@ -18,12 +18,12 @@ static void	handle_quotes_in_args(char **args)
 	}
 }
 
-static void	command_not_found_error(char *cmd)
+static void	command_not_found_error(char *cmd, t_env *env)
 {
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": command not found\n", 2);
-	exit(127);
+	builtin_exit_wrapper(env, 127);
 }
 
 void	execute_command_in_pipe(t_ast_node *cmd, t_env *env, t_fd_info *fd_info)
@@ -31,19 +31,20 @@ void	execute_command_in_pipe(t_ast_node *cmd, t_env *env, t_fd_info *fd_info)
 	int	status;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
-		exit(1);
+		builtin_exit_wrapper(env, 1);
 	handle_quotes_in_args(cmd->args);
 	if (cmd->redirects)
 	{
 		if (!handle_command_redirections(cmd, fd_info))
-			exit(1);
+			builtin_exit_wrapper(env, 1);
 	}
 	if (is_builtin(cmd->args[0]))
 	{
-		status = execute_builtin(cmd->args, env);
-		exit(status);
+		//status = execute_builtin(cmd->args, env);
+		status = execute_builtin_wrapper(cmd->args, env);
+		builtin_exit_wrapper(env, status);
 	}
 	setup_child_signals();
 	execvp(cmd->args[0], cmd->args);
-	command_not_found_error(cmd->args[0]);
+	command_not_found_error(cmd->args[0], env);
 }

@@ -71,13 +71,6 @@ typedef struct s_heredoc_data
 	t_token	*token;
 }	t_heredoc_data;
 
-/*typedef struct s_heredoc
-{
-	char	*content;
-	char	*temp_file;
-	int		temp_fd;
-}	t_heredoc;*/
-
 typedef struct s_fd_info
 {
 	int	saved_stdout;
@@ -96,16 +89,9 @@ typedef struct s_quote_state
 	size_t	len;
 }	t_quote_state;
 
-typedef enum	e_ast_type
-{
-	AST_COMMAND,
-	AST_PIPE,
-	AST_REDIRECT,
-}	t_ast_type;
-
+// Структура узла AST
 typedef struct s_ast_node
 {
-	t_ast_type			type;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 	char				**args;
@@ -133,16 +119,5 @@ typedef struct s_str_processor
 	int		*i;
 	int		*j;
 }	t_str_processor;
-
-typedef struct s_minishell_data
-{
-    t_env       	*env;
-    t_token     	*tokens;
-    t_ast_node  	*ast;
-	t_redirect		*redirects;
-    t_heredoc_data *heredoc;
-    char        *input;
-} t_minishell_data;
-
 
 #endif

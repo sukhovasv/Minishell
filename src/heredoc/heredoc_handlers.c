@@ -28,8 +28,8 @@ int	handle_signals_and_fork(t_heredoc_data *heredocs, int count, t_env *env)
 	{
 		setup_heredoc_signals();
 		if (process_heredocs_in_child(heredocs, count, env) != 0)
-			exit(1);
-		exit(0);
+			builtin_exit_wrapper(env, 1);
+		builtin_exit_wrapper(env, 0);
 	}
 	ignore_signals();
 	waitpid(pid, &status, 0);

@@ -90,19 +90,24 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 
 int	main(void)
 {
-	t_env			*env;
+	t_minishell_data data;
 	t_fd_info		fd_info;
 	int				is_interactive;
 	struct termios	original;
 
+	data.env = NULL;
+    data.tokens = NULL;
+    data.ast = NULL;
+    data.redirects = NULL;
+    data.heredoc = NULL;
 	tcgetattr(STDIN_FILENO, &original);
-	init_shell(&env, &fd_info, &is_interactive);
-	if (!env)
-		return (1);
-	shell_loop(env, &fd_info, is_interactive);
+	init_shell(&data.env, &fd_info, &is_interactive);
+	if (!data.env)
+        return (1);
+	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	//rl_clear_history();
+	rl_clear_history();
 	clear_history();
-	free_env(env);
+	free_all(&data);
 	return (0);
 }

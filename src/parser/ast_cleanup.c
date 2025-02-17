@@ -28,7 +28,7 @@ void	free_args(char **args)
 	free(args);
 }
 
-void	free_ast_node(t_ast_node *node)
+/*void	free_ast_node(t_ast_node *node)
 {
 	if (!node)
 		return ;
@@ -41,6 +41,25 @@ void	free_ast_node(t_ast_node *node)
 	if (node->right)
 		free_ast_node(node->right);
 	free(node);
+}*/
+
+void free_ast_node(t_ast_node *node)
+{
+    if (!node)
+        return;
+    if (node->args)
+    {
+        int i = 0;
+        while (node->args[i])
+            free(node->args[i++]);
+        free(node->args);
+    }
+    free_redirections(node->redirects);
+    if (node->heredoc_data)  
+        free_heredoc_data(node->heredoc_data);
+    free_ast_node(node->left);
+    free_ast_node(node->right);
+    free(node);
 }
 
 void	free_redirects(t_redirect *redirects)

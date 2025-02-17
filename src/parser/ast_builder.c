@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_ast_node	*parse_command(const char *input, t_env *env)
+/*t_ast_node	*parse_command(const char *input, t_env *env)
 {
 	t_token		*tokens;
 	t_token		*current;
@@ -11,9 +11,14 @@ t_ast_node	*parse_command(const char *input, t_env *env)
 		return (NULL);
 	current = tokens;
 	ast = parse_pipe_sequence(&current);
+	if (!ast)
+	{
+    	free_tokens(tokens);
+    	return (NULL);
+	}
 	free_tokens(tokens);
 	return (ast);
-}
+}*/
 
 t_ast_node	*build_ast(t_token *tokens)
 {

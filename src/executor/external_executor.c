@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	execute_external_command(t_ast_node *node, t_fd_info *fd_info)
+int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 {
 	pid_t	pid;
 	int		status;
@@ -17,14 +17,14 @@ int	execute_external_command(t_ast_node *node, t_fd_info *fd_info)
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(node->args[0], 2);
 		ft_putstr_fd(": command not found\n", 2);
-		exit(127);
+		builtin_exit_wrapper(env, 1);
 	}
 	waitpid(pid, &status, 0);
 	restore_redirections(fd_info);
 	return (WEXITSTATUS(status));
 }
 
-int	try_execute(char *cmd, char **argv, char **envp)
+/*int	try_execute(char *cmd, char **argv, char **envp)
 {
 	if (access(cmd, F_OK) == -1)
 		return (0);
@@ -37,4 +37,4 @@ int	try_execute(char *cmd, char **argv, char **envp)
 	}
 	execve(cmd, argv, envp);
 	return (0);
-}
+}*/

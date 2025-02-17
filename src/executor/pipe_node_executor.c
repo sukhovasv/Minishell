@@ -5,10 +5,10 @@ static void	handle_first_child(int *pipefd, t_ast_node *node,
 {
 	close(pipefd[0]);
 	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-		exit(1);
+		builtin_exit_wrapper(env, 1);
 	close(pipefd[1]);
 	execute_command_in_pipe(node->left, env, fd_info);
-	exit(1);
+	builtin_exit_wrapper(env, 1);
 }
 
 static void	handle_second_child(int *pipefd, t_ast_node *node,
@@ -16,13 +16,13 @@ static void	handle_second_child(int *pipefd, t_ast_node *node,
 {
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
-		exit(1);
+		builtin_exit_wrapper(env, 1);
 	close(pipefd[0]);
 	if (node->right->type == AST_PIPE)
 		execute_pipe_node(node->right, env, fd_info);
 	else
 		execute_command_in_pipe(node->right, env, fd_info);
-	exit(1);
+	builtin_exit_wrapper(env, 1);
 }
 
 static int	handle_pipe_error(int *pipefd)

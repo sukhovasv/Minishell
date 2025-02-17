@@ -34,6 +34,7 @@ SRC_FILES = \
 	$(SRC_DIR)/parser/ast_redirects.c \
 	$(SRC_DIR)/utils/fd_utils.c $(SRC_DIR)/utils/quote_handlers.c \
 	$(SRC_DIR)/utils/quote_utils.c $(SRC_DIR)/utils/redirect_handlers.c \
+	$(SRC_DIR)/utils/free_minishell.c \
 
 # Object files
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))

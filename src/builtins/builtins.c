@@ -23,7 +23,7 @@ int	is_builtin(const char *cmd)
 		|| ft_strncmp(cmd, "env", 3) == 0);
 }
 
-int	execute_builtin(char **argv, t_env *env)
+/*int	execute_builtin(char **argv, t_env *env)
 {
 	if (ft_strncmp(argv[0], "cd", 2) == 0)
 		return (builtin_cd(argv));
@@ -40,4 +40,36 @@ int	execute_builtin(char **argv, t_env *env)
 	else if (ft_strncmp(argv[0], "exit", 4) == 0)
 		return (builtin_exit(argv));
 	return (1);
+}*/
+
+int execute_builtin(char **argv, t_minishell_data *data)
+{
+    if (ft_strncmp(argv[0], "cd", 2) == 0)
+        return (builtin_cd(argv));
+    else if (ft_strncmp(argv[0], "pwd", 3) == 0)
+        return (builtin_pwd());
+    else if (ft_strncmp(argv[0], "echo", 4) == 0)
+        return (builtin_echo(argv));
+    else if (ft_strncmp(argv[0], "export", 6) == 0)
+        return (builtin_export(argv, data->env));
+    else if (ft_strncmp(argv[0], "unset", 5) == 0)
+        return (builtin_unset(argv, data->env));
+    else if (ft_strncmp(argv[0], "env", 3) == 0)
+        return (builtin_env(data->env->environ));
+    else if (ft_strncmp(argv[0], "exit", 4) == 0)
+        return (builtin_exit(data, argv));
+    return (1);
 }
+
+int execute_builtin_wrapper(char **argv, t_env *env)
+{
+    t_minishell_data data;
+
+    data.env = env;
+    data.tokens = NULL;
+    data.ast = NULL;
+    data.input = NULL;
+
+    return execute_builtin(argv, &data);
+}
+
