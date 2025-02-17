@@ -16,19 +16,19 @@ SRC_FILES := ft_atoi.c mem/ft_bzero.c mem/ft_calloc.c ft_isalnum.c ft_isalpha.c 
             helpers/print_helpers.c str/ft_str_utils.c str/ft_strndup.c\
             ft_printf.c dllist/dllist1.c dllist/dlnode.c dllist/dllist_free.c \
             gnl/get_next_line.c gnl/gnl_utils.c
-OBJ_DIR := obj
-OBJ_FILES = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
-HEADER := -I ../../include/
-LIBC := ar rc
-LIBR := ranlib
-RM := rm -f
+OBJ_DIR 	:= obj
+OBJ_FILES 	= $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
+HEADER 		:= -I ../../include/
+LIB_COMMAND := ar rcsP
+
+RM 			:= rm -f
 
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@echo Building $@
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(HEADER) -c $^ -o $@
+	@$(CC) $(CFLAGS) $(HEADER) -c $^ -o $@
 
 $(OBJ_FILES): | $(OBJ_DIR)
 
@@ -36,8 +36,7 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 $(NAME): $(OBJ_FILES)
-	$(LIBC) $(NAME) $(OBJ_FILES)
-	$(LIBR) $(NAME)
+	$(LIB_COMMAND) $(NAME) $(OBJ_FILES)
 
 clean:
 	$(RM) -r $(OBJ_DIR)

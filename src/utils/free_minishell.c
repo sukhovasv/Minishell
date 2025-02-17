@@ -113,7 +113,7 @@ void free_all(t_minishell_data *data)
     if (data->ast)
         free_ast_node(data->ast);
     if (data->redirects)
-        free_redirections(data->redirects);
+        free_redirects(data->redirects);
     if (data->heredoc)
         free_heredoc_data(data->heredoc);
 }

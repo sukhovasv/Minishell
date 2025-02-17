@@ -62,7 +62,7 @@ void	add_token(t_token **head, t_token *new_token)
 	current->next = new_token;
 }
 
-void	free_tokens(t_token *tokens)
+/*void	free_tokens(t_token *tokens)
 {
 	t_token	*next;
 
@@ -73,4 +73,21 @@ void	free_tokens(t_token *tokens)
 		free(tokens);
 		tokens = next;
 	}
+}*/
+
+void free_tokens(t_token *tokens)
+{
+    t_token *next;
+    
+    while (tokens)
+    {
+        next = tokens->next;
+        free(tokens->value);
+        if (tokens->heredoc_content)  // Добавляем освобождение heredoc_content
+            free(tokens->heredoc_content);
+        if (tokens->temp_file)        // Добавляем освобождение temp_file
+            free(tokens->temp_file);
+        free(tokens);
+        tokens = next;
+    }
 }

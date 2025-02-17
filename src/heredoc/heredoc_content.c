@@ -47,7 +47,17 @@ static int	cleanup_heredoc(char *line, t_token *token, int fd)
 	return (0);
 }
 
-int	handle_heredoc_content(t_token *token, t_env *env)
+static int	success_heredoc(t_token *token, int fd)
+{
+	close(fd);
+	unlink(token->temp_file);
+	free(token->temp_file);
+	token->temp_file = NULL;
+	setup_signals();
+	return (1);
+}
+
+/*int	handle_heredoc_content(t_token *token, t_env *env)
 {
 	char	*line;
 	int		fd;
@@ -73,4 +83,31 @@ int	handle_heredoc_content(t_token *token, t_env *env)
 	close(fd);
 	setup_signals();
 	return (1);
+}*/
+
+int	handle_heredoc_content(t_token *token, t_env *env)
+{
+	char	*line;
+	int		fd;
+	int		expand_vars;
+	int		status;
+
+	fd = init_heredoc_file(token);
+	if (fd == -1)
+		return (0);
+	expand_vars = !token->has_quotes;
+	setup_heredoc_signals();
+	while (1)
+	{
+		line = readline("> ");
+		status = check_heredoc_line(&line, token, env, expand_vars);
+		if (status == -1)
+			return (cleanup_heredoc(line, token, fd));
+		if (status == 0)
+			break ;
+		write_line_to_heredoc(line, fd);
+		free(line);
+	}
+	//free(line);
+	return (success_heredoc(token, fd));
 }

@@ -50,12 +50,16 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 	if (tokens)
 	{
 		ast = build_ast(tokens);
-		if (ast)
+		if (!ast)
 		{
-			status = execute_ast_node(ast, env, fd_info);
-			env->last_status = status;
-			free_ast_node(ast);
+			free_tokens(tokens);
+			return ;
 		}
+		status = execute_ast_node(ast, env, fd_info);
+		env->last_status = status;
+		env->ast = ast;
+		free_ast_node(ast);
+		env->ast = NULL;
 		free_tokens(tokens);
 	}
 }

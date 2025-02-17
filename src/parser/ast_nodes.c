@@ -25,6 +25,9 @@ t_ast_node	*create_pipe_node(t_ast_node *left, t_ast_node *right)
 	node->right = right;
 	node->args = NULL;
 	node->redirects = NULL;
+	node->heredoc_data = NULL;
+	node->pipe_level = 0;
+	node->heredoc_count = 0;
 	return (node);
 }
 

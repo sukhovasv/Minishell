@@ -1,15 +1,18 @@
-CC = cc
-CFLAGS = -DDEBUG -Wall -Wextra -Werror
+NAME		= minishell
+
+CC 			= cc
+#DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3 -fsanitize=address -fsanitize=undefined
+DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3
+CFLAGS 		= -DDEBUG -Wall -Wextra -Werror
 
 # Directories
 INCLUDE_DIR = ./include
-LIBFT_DIR = ./lib/libft
-OBJ_DIR = ./obj
-BIN_DIR = ./bin
-SRC_DIR = ./src
+LIBFT_DIR 	= ./lib/libft
+OBJ_DIR		= ./obj
+SRC_DIR		= ./src
 
 # Source files
-SRC_FILES = \
+SRC_FILES	= \
 	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/executor/external_executor.c $(SRC_DIR)/executor/pipe_node_executor.c \
 	$(SRC_DIR)/executor/ast_executor.c $(SRC_DIR)/executor/redirections_executor.c \
@@ -37,42 +40,38 @@ SRC_FILES = \
 	$(SRC_DIR)/utils/free_minishell.c \
 
 # Object files
-OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
+OBJ_FILES	= $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 # Libraries
-LIBFT = $(LIBFT_DIR)/libft.a
-LIBS = -L$(LIBFT_DIR) -lft -lreadline
+LIBFT		= $(LIBFT_DIR)/libft.a
+LIBS		= -L$(LIBFT_DIR) -lft -lreadline
 
 # Targets
-all: directories $(BIN_DIR)/minishell
+all: $(NAME)
+
+$(NAME): $(LIBFT) $(OBJ_FILES)
+		$(CC) $(CFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LIBS)
 
 run: all
-	./$(BIN_DIR)/minishell
-
-directories:
-	@mkdir -p $(OBJ_DIR) $(BIN_DIR)
-
-$(BIN_DIR)/minishell: $(OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+		./minishell
 
 # Rules
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo Building $@
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(HEADER) -I$(INCLUDE_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) $(HEADER) $(DEBUG_FLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 $(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
 
 clean:
-	$(RM) -r $(OBJ_DIR)
-	$(MAKE) -C $(LIBFT_DIR) clean
+	@$(RM) -r $(OBJ_DIR)
+	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory clean
 
 fclean: clean
-	$(RM) -r $(BIN_DIR)
-	$(RM) ./minishell
-	$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(RM) ./minishell
+	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re directories run
+.PHONY: all clean fclean re run

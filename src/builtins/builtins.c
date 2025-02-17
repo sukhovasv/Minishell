@@ -65,11 +65,9 @@ int execute_builtin_wrapper(char **argv, t_env *env)
 {
     t_minishell_data data;
 
+	ft_memset(&data, 0, sizeof(t_minishell_data));
     data.env = env;
-    data.tokens = NULL;
-    data.ast = NULL;
-    data.input = NULL;
+    data.ast = env->ast;
 
     return execute_builtin(argv, &data);
 }
-

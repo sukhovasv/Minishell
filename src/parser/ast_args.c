@@ -37,7 +37,11 @@ int	copy_token_values(char **args, t_token *tokens, int count)
 		{
 			args[i] = ft_strdup(curr->value);
 			if (!args[i])
+            {
+				while (--i >= 0)
+					free(args[i]);
 				return (0);
+			}
 			i++;
 		}
 		curr = curr->next;

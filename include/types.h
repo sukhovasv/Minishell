@@ -24,11 +24,6 @@ typedef struct s_parser_state
 	char	quote_char;
 }	t_parser_state;
 
-typedef struct s_env
-{
-	char	**environ;
-	int		last_status;
-}	t_env;
 
 typedef enum e_token_type
 {
@@ -115,6 +110,14 @@ typedef struct s_ast_node
 	int					heredoc_count;
 }	t_ast_node;
 
+typedef struct s_env
+{
+	char		**environ;
+	int			last_status;
+	t_ast_node	*ast;
+}	t_env;
+
+
 typedef struct s_word_parser
 {
 	const char	*str;
@@ -140,8 +143,8 @@ typedef struct s_minishell_data
     t_token     	*tokens;
     t_ast_node  	*ast;
 	t_redirect		*redirects;
-    t_heredoc_data *heredoc;
-    char        *input;
+    t_heredoc_data	*heredoc;
+    char        	*input;
 } t_minishell_data;
 
 

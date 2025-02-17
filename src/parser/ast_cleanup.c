@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	free_redirections(t_redirect *redirects)
+/*void	free_redirections(t_redirect *redirects)
 {
 	t_redirect	*curr;
 	t_redirect	*next;
@@ -13,7 +13,7 @@ void	free_redirections(t_redirect *redirects)
 		free(curr);
 		curr = next;
 	}
-}
+}*/
 
 void	free_args(char **args)
 {
@@ -54,7 +54,7 @@ void free_ast_node(t_ast_node *node)
             free(node->args[i++]);
         free(node->args);
     }
-    free_redirections(node->redirects);
+    free_redirects(node->redirects);
     if (node->heredoc_data)  
         free_heredoc_data(node->heredoc_data);
     free_ast_node(node->left);

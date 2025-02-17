@@ -64,19 +64,26 @@ int	builtin_echo(char **argv)
 
 int builtin_exit(t_minishell_data *data, char **argv)
 {
-    int status = 0;
+    int		status = 0;
+	char	*nptr;
+	int 	negative;
 
     if (argv[1])
     {
-        if (!is_str_digit(argv[1]))
+		negative = 1;
+		nptr = argv[1];
+		if (*nptr == '+' || *nptr == '-')
+			if (*nptr++ == '-')
+				negative *= -1;
+        if (!is_str_digit(nptr) || ft_strlen(nptr) > 19)
         {
             ft_putstr_fd("exit: ", 2);
             ft_putstr_fd(argv[1], 2);
             ft_putendl_fd(": numeric argument required", 2);
             free_all(data);  // Очистка памяти перед выходом
-            exit(255);
+            exit(2);
         }
-        status = ft_atoi(argv[1]);
+        status = ft_atoi(nptr) * negative;
         if (argv[2])
         {
             ft_putendl_fd("exit: too many arguments", 2);
@@ -92,13 +99,9 @@ void builtin_exit_wrapper(t_env *env, int status)
 {
     t_minishell_data data;
 
+	ft_memset(&data, 0, sizeof(t_minishell_data)); // Инициализируем все поля нулями
     data.env = env;
-    data.tokens = NULL;
-    data.ast = NULL;
-    data.input = NULL;
-
-    char *status_str = ft_itoa(status);  // Преобразуем число в строку
+    char *status_str = ft_itoa(status);
     builtin_exit(&data, (char *[]){"exit", status_str, NULL});
-    free(status_str);  // Освобождаем память после использования
+    free(status_str);
 }
-
