@@ -30,7 +30,7 @@ t_env	*init_env(char **environ)
 	size = 0;
 	while (environ[size])
 		size++;
-	env = malloc(sizeof(t_env));
+	env = ft_calloc(1, sizeof(t_env));
 	if (!env)
 		return (NULL);
 	env->environ = malloc(sizeof(char *) * (size + 1));

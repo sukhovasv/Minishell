@@ -27,6 +27,7 @@ t_ast_node	*parse_pipe_sequence(t_token **current);
 //void		free_redirections(t_redirect *redirects);
 void		free_args(char **args);
 void		free_ast_node(t_ast_node *node);
+void		free_ast_node_nonrec(t_ast_node *node);
 void		free_redirects(t_redirect *redirects);
 void		free_args_array(char **args);
 t_ast_node	*create_command_node(char **args, t_redirect *redirects);

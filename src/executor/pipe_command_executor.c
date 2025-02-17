@@ -45,6 +45,8 @@ void	execute_command_in_pipe(t_ast_node *cmd, t_env *env, t_fd_info *fd_info)
 		builtin_exit_wrapper(env, status);
 	}
 	setup_child_signals();
+
 	execvp(cmd->args[0], cmd->args);
+
 	command_not_found_error(cmd->args[0], env);
 }

@@ -8,7 +8,7 @@ static void	init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
 
 	*env = init_env(environ);
 	setup_signals();
-	*is_interactive = isatty(STDIN_FILENO);
+	*is_interactive = isatty(STDIN_FILENO) && isatty(STDERR_FILENO);
 	fd_info->saved_stdout = -1;
 	fd_info->saved_stdin = -1;
 }
@@ -51,16 +51,13 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 	{
 		ast = build_ast(tokens);
 		if (!ast)
-		{
-			free_tokens(tokens);
-			return ;
-		}
-		status = execute_ast_node(ast, env, fd_info);
-		env->last_status = status;
+			return;
 		env->ast = ast;
-		free_ast_node(ast);
-		env->ast = NULL;
+		env->tokens = tokens;
+		status = execute_ast_node(ast, env, fd_info);
 		free_tokens(tokens);
+		env->last_status = status;
+		env->ast = (free_ast_node(ast), NULL);
 	}
 }
 
@@ -99,15 +96,11 @@ int	main(void)
 	int				is_interactive;
 	struct termios	original;
 
-	data.env = NULL;
-    data.tokens = NULL;
-    data.ast = NULL;
-    data.redirects = NULL;
-    data.heredoc = NULL;
+	ft_memset(&data, 0, sizeof(t_minishell_data));
 	tcgetattr(STDIN_FILENO, &original);
 	init_shell(&data.env, &fd_info, &is_interactive);
 	if (!data.env)
-        return (1);
+        return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
 	rl_clear_history();

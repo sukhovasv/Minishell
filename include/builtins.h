@@ -18,7 +18,7 @@
 
 int		is_str_digit(const char *str);
 int		builtin_echo(char **argv);
-int		builtin_cd(char **argv);
+int		builtin_cd(char **argv, t_env *env);
 int		builtin_pwd(void);
 //int		builtin_exit(char **argv);
 void	remove_variable(t_env *env_struct, const char *key);
@@ -44,7 +44,7 @@ char	*get_env_value(const char *var_name, t_env *env);
 char	*expand_env_var(const char *str, size_t *i, t_env *env);
 char	*expand_env_variables(const char *input, t_env *env);
 int		execute_builtin_wrapper(char **argv, t_env *env);
-int		builtin_exit(t_minishell_data *data, char **argv);
+int		builtin_exit(t_minishell_data *data, char **argv, int *exitcode);
 int		execute_builtin(char **argv, t_minishell_data *data);
 void	builtin_exit_wrapper(t_env *env, int status);
 

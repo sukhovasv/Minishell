@@ -104,14 +104,18 @@ void free_heredoc_data(t_heredoc_data *heredoc)
 
 void free_all(t_minishell_data *data)
 {
-    if (!data)
-        return;
-    if (data->env)
-        free_env(data->env);
+	if (!data)
+		return;
+	if (data->env)
+	{
+		if (data->env->tokens)
+			free_tokens(data->env->tokens);
+		if (data->env->ast)
+			free_ast_node(data->env->ast);
+		free_env(data->env);
+	}
     if (data->tokens)
         free_tokens(data->tokens);
-    if (data->ast)
-        free_ast_node(data->ast);
     if (data->redirects)
         free_redirects(data->redirects);
     if (data->heredoc)

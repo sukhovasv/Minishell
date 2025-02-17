@@ -28,20 +28,16 @@ void	free_args(char **args)
 	free(args);
 }
 
-/*void	free_ast_node(t_ast_node *node)
+void	free_ast_node_nonrec(t_ast_node *node)
 {
 	if (!node)
 		return ;
 	if (node->args)
 		free_args(node->args);
 	if (node->redirects)
-		free_redirections(node->redirects);
-	if (node->left)
-		free_ast_node(node->left);
-	if (node->right)
-		free_ast_node(node->right);
+		free_redirects(node->redirects);
 	free(node);
-}*/
+}
 
 void free_ast_node(t_ast_node *node)
 {

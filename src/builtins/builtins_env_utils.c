@@ -6,12 +6,11 @@ int	update_existing_variable(t_env *env, char *key, char *value)
 	int		key_len;
 	char	*new_var;
 
-	i = 0;
+	i = -1;
 	key_len = ft_strlen(key);
-	while (env->environ[i])
+	while (env->environ[++i])
 	{
-		if (ft_strncmp(env->environ[i], key, key_len) == 0
-			&& env->environ[i][key_len] == '=')
+		if (!ft_strncmp(env->environ[i], key, key_len))
 		{
 			new_var = create_env_string(key, value);
 			if (!new_var)
@@ -20,7 +19,6 @@ int	update_existing_variable(t_env *env, char *key, char *value)
 			env->environ[i] = new_var;
 			return (1);
 		}
-		i++;
 	}
 	return (0);
 }

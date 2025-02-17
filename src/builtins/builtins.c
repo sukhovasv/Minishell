@@ -45,7 +45,7 @@ int	is_builtin(const char *cmd)
 int execute_builtin(char **argv, t_minishell_data *data)
 {
     if (ft_strncmp(argv[0], "cd", 2) == 0)
-        return (builtin_cd(argv));
+        return (builtin_cd(argv, data->env));
     else if (ft_strncmp(argv[0], "pwd", 3) == 0)
         return (builtin_pwd());
     else if (ft_strncmp(argv[0], "echo", 4) == 0)
@@ -57,7 +57,7 @@ int execute_builtin(char **argv, t_minishell_data *data)
     else if (ft_strncmp(argv[0], "env", 3) == 0)
         return (builtin_env(data->env->environ));
     else if (ft_strncmp(argv[0], "exit", 4) == 0)
-        return (builtin_exit(data, argv));
+        return (builtin_exit(data, argv, NULL));
     return (1);
 }
 
@@ -67,7 +67,5 @@ int execute_builtin_wrapper(char **argv, t_env *env)
 
 	ft_memset(&data, 0, sizeof(t_minishell_data));
     data.env = env;
-    data.ast = env->ast;
-
     return execute_builtin(argv, &data);
 }

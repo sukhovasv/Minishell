@@ -115,6 +115,7 @@ typedef struct s_env
 	char		**environ;
 	int			last_status;
 	t_ast_node	*ast;
+	t_token		*tokens;
 }	t_env;
 
 
@@ -141,7 +142,6 @@ typedef struct s_minishell_data
 {
     t_env       	*env;
     t_token     	*tokens;
-    t_ast_node  	*ast;
 	t_redirect		*redirects;
     t_heredoc_data	*heredoc;
     char        	*input;

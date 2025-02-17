@@ -44,6 +44,26 @@ static int	handle_fork_error(int *pipefd, pid_t pid1)
 	return (1);
 }
 
+int	ft_decode_wstatus(int wstatus)
+{
+	int	status;
+
+	status = (EXIT_FAILURE);
+	if (WIFSIGNALED (wstatus))
+	{
+		if (WCOREDUMP(wstatus))
+			ft_putstr_fd("Quit (core dumped)\n", STDERR_FILENO);
+		else if (WTERMSIG (wstatus) == SIGKILL)
+			ft_putstr_fd ("Killed\n", STDERR_FILENO);
+		status = (128 + WTERMSIG (wstatus));
+	}
+	else if (WIFSTOPPED(wstatus))
+		status = (128 + WSTOPSIG(wstatus));
+	else if (WIFEXITED(wstatus))
+		status = (WEXITSTATUS (wstatus));
+	return (status);
+}
+
 int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
 	int		pipefd[2];
@@ -67,5 +87,5 @@ int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
-	return (WEXITSTATUS(status));
+	return (ft_decode_wstatus(status));
 }

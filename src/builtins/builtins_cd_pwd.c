@@ -76,7 +76,7 @@ static void cd_update_pwd(t_env *env, char *old_pwd)
         update_existing_variable(env, "PWD", path);
 }
 
-int builtin_cd(char **argv)
+/*int builtin_cd(char **argv)
 {
     extern char **environ;
     t_env *env;
@@ -104,6 +104,27 @@ int builtin_cd(char **argv)
 
     free(old_pwd);
     free_env(env);
+    return (status);
+}*/
+
+int builtin_cd(char **argv, t_env *env)  // добавляем env как параметр
+{
+    char *old_pwd;
+    int status;
+
+    old_pwd = getcwd(NULL, 0);
+    if (!old_pwd)
+        return (1);
+
+    if (!argv[1])
+        status = cd_handle_home(env, old_pwd);
+    else
+        status = cd_handle_path(env, old_pwd, argv[1]);
+
+    if (status == 0)
+        cd_update_pwd(env, old_pwd);
+
+    free(old_pwd);
     return (status);
 }
 
