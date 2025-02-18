@@ -16,6 +16,8 @@
 # include <readline/history.h>
 # include "libft.h"
 
+int		ft_decode_wstatus(int wstatus);
+int		ft_wait_for_pid(int *wstatus, pid_t pid);
 void	restore_fds(int saved_stdout, int saved_stdin);
 int		handle_command_error(t_ast_node *cmd, int saved_stdout,
 			int saved_stdin);

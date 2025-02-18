@@ -4,53 +4,54 @@ int execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 {
     pid_t pid;
     int status;
-
-    if (!handle_command_redirections(node, fd_info))
-        return (1);
+    int wstatus;
 
     pid = fork();
-    if (pid == -1)
-    {
-        perror("minishell: fork");
-        return (1);
-    }
-
-    if (pid == 0)
-    {
-        setup_child_signals();
-        search_and_execute(node->args, env->environ);
-        exit(127);
-    }
-
-    waitpid(pid, &status, 0);
+	if (pid == 0)
+	{
+		if (!handle_command_redirections(node, fd_info))
+			exit (1);
+		setup_child_signals();
+		status = search_and_execute(node->args, env);
+		exit(status);
+	}
+	else if (pid < 0)
+		return (perror("minishell: fork"), EXIT_FAILURE);
+	else
+		status = (ft_decode_wstatus(ft_wait_for_pid(&wstatus, pid)));
     restore_redirections(fd_info);
-    
-    if (WIFEXITED(status))
-        return (WEXITSTATUS(status));
-    else if (WIFSIGNALED(status))
-        return (128 + WTERMSIG(status));
-    return (1);
+    return (status);
 }
 
-void search_and_execute(char **argv, char **envp)
+int search_and_execute(char **argv, t_env *env)
 {
+	int status;
     char *path;
+	char *const fullpath = (char[PATH_MAX]){0};
 
-    try_direct_execution(argv, envp);
-    path = get_path_env(argv);
-    try_path_execution(path, argv, envp);
+	errno = ENOENT;
+	status = try_direct_execution(argv, fullpath);
+	if ((status == -1) && (errno == ENOENT || errno == EACCES))
+	{
+		path = get_env_value("PATH", env);
+		status = try_path_execution(path, argv, fullpath);
+		free(path);
+	}
+	if (status == -1)
+		perror(path);
+	else
+		status = try_execute(fullpath, argv, env->environ);
+	return (status);
 }
 
-void try_direct_execution(char **argv, char **envp)
+int try_direct_execution(char **argv, char *fullpath)
 {
-    if (ft_strchr(argv[0], '/'))
-    {
-        try_execute(argv[0], argv, envp);
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(argv[0], 2);
-        ft_putendl_fd(": No such file or directory", 2);
-        exit(127);
-    }
+	int		errcode;
+
+	errcode = -1;
+	if ((*argv[0] == '/') || *argv[0] == '.')
+		errcode = access(ft_strncpy(fullpath, argv[0], PATH_MAX), F_OK);
+	return (errcode);
 }
 
 char *get_path_env(char **argv)
@@ -72,38 +73,31 @@ char *get_path_env(char **argv)
     return (path);
 }
 
-void try_path_execution(char *path, char **argv, char **envp)
+int try_path_execution(char *path, char **argv, char *const fullpath)
 {
     char **paths;
-    char *full_cmd;
-    char *temp;
     int i;
+    int errcode;
 
     paths = ft_split(path, ':');
     if (!paths)
-        exit(1);
-    
-    i = 0;
-    while (paths[i])
-    {
-        temp = ft_strjoin(paths[i], "/");
-        if (!temp)
-            exit(1);
-        full_cmd = ft_strjoin(temp, argv[0]);
-        free(temp);
-        if (!full_cmd)
-            exit(1);
-        if (try_execute(full_cmd, argv, envp))
-            free(full_cmd);
-        i++;
-    }
-    free_args_array(paths);
-    free(path);
-    
-    ft_putstr_fd("minishell: ", 2);
-    ft_putstr_fd(argv[0], 2);
-    ft_putendl_fd(": command not found", 2);
-    exit(127);
+		return (EXIT_FAILURE);
+    i = -1;
+	errcode = -1;
+	errno = ENOENT;
+    while (((errcode == -1) && (errno == ENOENT || errno == EACCES)) && paths[++i])
+	{
+		ft_strlcpy(fullpath, paths[i], PATH_MAX);
+		ft_strlcat(fullpath, "/", PATH_MAX);
+		ft_strlcat(fullpath, argv[0], PATH_MAX);
+		errcode = access(fullpath, F_OK);
+	}
+	free_args_array(paths);
+	if ((errcode == -1) && (errno == ENOENT || errno == EACCES))
+		errcode = access(argv[0], F_OK);
+	else
+		errcode = EX_NOTFOUND;
+	return (errcode);
 }
 
 int try_execute(char *cmd, char **argv, char **envp)

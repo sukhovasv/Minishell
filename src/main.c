@@ -55,9 +55,9 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 		env->ast = ast;
 		env->tokens = tokens;
 		status = execute_ast_node(ast, env, fd_info);
-		free_tokens(tokens);
-		env->last_status = status;
+		env->tokens = (free_tokens(tokens), NULL);
 		env->ast = (free_ast_node(ast), NULL);
+		env->last_status = status;
 	}
 }
 

@@ -7,7 +7,7 @@ SRC_FILES := ft_atoi.c mem/ft_bzero.c mem/ft_calloc.c ft_isalnum.c ft_isalpha.c 
 			mem/ft_memset.c ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			ft_putstr_fd.c str/ft_split.c str/ft_strchr.c str/ft_strdup.c str/ft_striteri.c \
 			str/ft_strjoin.c str/ft_strlcat.c str/ft_strlcpy.c str/ft_strlen.c str/ft_strmapi.c \
-			str/ft_strncmp.c str/ft_strnstr.c str/ft_strrchr.c str/ft_strtrim.c str/ft_substr.c \
+			str/ft_strncmp.c  str/ft_strncpy.c str/ft_strnstr.c str/ft_strrchr.c str/ft_strtrim.c str/ft_substr.c \
 			ft_tolower.c ft_toupper.c ft_isint.c\
 			lst/ft_lstnew.c lst/ft_lstadd_front.c lst/ft_lstsize.c lst/ft_lstlast.c \
             lst/ft_lstadd_back.c lst/ft_lstdelone.c lst/ft_lstclear.c \

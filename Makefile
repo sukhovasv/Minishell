@@ -1,8 +1,8 @@
 NAME		= minishell
 
 CC 			= cc
-#DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3 -fsanitize=address -fsanitize=undefined
-DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3
+DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3 -fsanitize=address -fsanitize=undefined
+#DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3
 CFLAGS 		= -DDEBUG -Wall -Wextra -Werror
 
 # Directories

@@ -44,6 +44,14 @@ static int	handle_fork_error(int *pipefd, pid_t pid1)
 	return (1);
 }
 
+int	ft_wait_for_pid(int *wstatus, pid_t pid)
+{
+	waitpid(pid, wstatus, WUNTRACED);
+	while (!WIFEXITED((*wstatus)) && !WIFSIGNALED((*wstatus)))
+		waitpid(pid, wstatus, WUNTRACED);
+	return (*wstatus);
+}
+
 int	ft_decode_wstatus(int wstatus)
 {
 	int	status;
