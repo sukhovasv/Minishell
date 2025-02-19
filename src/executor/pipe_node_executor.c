@@ -84,14 +84,25 @@ int	ft_decode_wstatus(int wstatus)
 	return (status);
 }
 
+static void	cleanup_heredocs_for_node(t_ast_node *node)
+{
+	t_heredoc_data	*heredocs;
+	int				count;
+
+	if (node && node->redirects)
+	{
+		count = prepare_heredoc_data(node->redirects, &heredocs);
+		if (count > 0)
+			cleanup_heredoc_files(heredocs, count);
+	}
+}
+
 int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 {
 	int				pipefd[2];
 	pid_t			pid1;
 	pid_t			pid2;
 	int				status;
-	t_heredoc_data *heredocs;
-    int				count;
 
 	if (pipe(pipefd) == -1)
 		return (1);
@@ -109,11 +120,6 @@ int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
-	if (node->left && node->left->redirects)
-	{
-		count = prepare_heredoc_data(node->left->redirects, &heredocs);
-		if (count > 0)
-			cleanup_heredoc_files(heredocs, count);
-	}
+	cleanup_heredocs_for_node(node->left);
 	return (ft_decode_wstatus(status));
 }
