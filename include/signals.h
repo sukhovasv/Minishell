@@ -16,10 +16,10 @@
 # include <readline/history.h>
 # include "libft.h"
 
-void setup_signals(void);
+void setup_signals(t_env *env);
 void reset_signals(void);
 void setup_child_signals(void);
-void setup_parent_signals(void);
+void setup_parent_signals(t_env *env);
 void ignore_signals(void);
 void handle_pending_signals(void);
 void setup_heredoc_signals(void);

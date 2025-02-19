@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 # define TYPES_H
 
+# define _GNU_SOURCE
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -110,12 +112,17 @@ typedef struct s_ast_node
 	int					heredoc_count;
 }	t_ast_node;
 
+
+typedef struct sigaction	t_sigaction;
+
 typedef struct s_env
 {
 	char		**environ;
 	int			last_status;
 	t_ast_node	*ast;
 	t_token		*tokens;
+	t_sigaction old_sigactions[5];
+	t_sigaction new_sigactions[5];
 }	t_env;
 
 

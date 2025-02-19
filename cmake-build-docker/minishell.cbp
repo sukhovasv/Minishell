@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="minishell"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="build_libft">
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 build_libft"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="minishell">
+				<Option output="/tmp/minishell/cmake-build-docker/minishell" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/tmp/minishell/include"/>
+					<Add directory="/usr/include/c++/13"/>
+					<Add directory="/usr/include/aarch64-linux-gnu/c++/13"/>
+					<Add directory="/usr/include/c++/13/backward"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/13/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 minishell"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="minishell/fast">
+				<Option output="/tmp/minishell/cmake-build-docker/minishell" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/tmp/minishell/include"/>
+					<Add directory="/usr/include/c++/13"/>
+					<Add directory="/usr/include/aarch64-linux-gnu/c++/13"/>
+					<Add directory="/usr/include/c++/13/backward"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/13/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 minishell/fast"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/tmp/minishell/cmake-build-docker"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j8 -f &quot;/tmp/minishell/cmake-build-docker/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/tmp/minishell/src/builtins/builtins.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_cd_pwd_echo.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_env.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_env_unset.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_env_utils.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_export.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_unset.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/builtins/builtins_utils.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/ast_executor.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/execute_command.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/execute_external.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/here_doc.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/here_doc_cleanup.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/here_doc_init.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/here_doc_process.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/here_doc_utils.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/path_utils.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/redirect_handlers.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/redirections.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/execute/utils_fd.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/main.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/not_using(to_delete)/handle_unclosed_quotes.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_args.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_node_creation.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_parser.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_parser_utilities.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_redirect.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/ast_utils.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/env_handler.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/parser/parse_quotes.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/signals.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/src/tokenize.c">
+			<Option target="minishell"/>
+		</Unit>
+		<Unit filename="/tmp/minishell/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
