@@ -57,8 +57,10 @@ int	builtin_cd(char **argv, t_env *env)
 	else
 		status = cd_handle_path(old_pwd, argv[1]);
 	if (status == 0)
+	{
 		cd_update_pwd(env, old_pwd);
-	free(old_pwd);
+		free(old_pwd);
+	}
 	return (status);
 }
 
