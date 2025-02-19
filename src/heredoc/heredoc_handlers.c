@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_handlers.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:24:08 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:24:10 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	write_single_heredoc(t_heredoc_data *data, t_env *env)
@@ -42,13 +54,39 @@ int	handle_signals_and_fork(t_heredoc_data *heredocs, int count, t_env *env)
 	return ((WIFEXITED(status) && WEXITSTATUS(status) == 0));
 }
 
-int	is_heredoc_without_command(t_redirect *redir, t_ast_node *ast)
+/*int	is_heredoc_without_command(t_redirect *redir, t_ast_node *ast)
 {
 	if (!redir)
 		return (1);
 	if (ast && ast->args && ast->args[0] && ast->args[0][0] != '\0')
 		return (0);
 	return (1);
+}*/
+
+int is_heredoc_without_command(t_redirect *redir, t_ast_node *ast)
+{
+    ft_putstr_fd("\nDebug: Checking heredoc command\n", 2);
+    
+    if (!redir)
+    {
+        ft_putstr_fd("Debug: No redirects\n", 2);
+        return (1);
+    }
+    
+    ft_putstr_fd("Debug: AST check: ", 2);
+    if (ast)
+        ft_putstr_fd("ast exists, ", 2);
+    if (ast && ast->args)
+        ft_putstr_fd("args exist, ", 2);
+    if (ast && ast->args && ast->args[0])
+        ft_putstr_fd("args[0] exists, ", 2);
+    if (ast && ast->args && ast->args[0] && ast->args[0][0] != '\0')
+        ft_putstr_fd("args[0] not empty", 2);
+    ft_putstr_fd("\n", 2);
+    
+    if (ast && ast->args && ast->args[0] && ast->args[0][0] != '\0')
+        return (0);
+    return (1);
 }
 
 int	handle_redir_heredoc(t_redirect *redir, t_fd_info *fd_info,

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_content.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:24:01 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:24:03 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	write_line_to_heredoc(char *line, int fd)
@@ -47,12 +59,19 @@ static int	cleanup_heredoc(char *line, t_token *token, int fd)
 	return (0);
 }
 
-static int	success_heredoc(t_token *token, int fd)
+/*static int	success_heredoc(t_token *token, int fd)
 {
 	close(fd);
 	unlink(token->temp_file);
 	free(token->temp_file);
 	token->temp_file = NULL;
+	setup_signals();
+	return (1);
+}*/
+
+static int	success_heredoc(int fd)
+{
+	close(fd);
 	setup_signals();
 	return (1);
 }
@@ -109,5 +128,5 @@ int	handle_heredoc_content(t_token *token, t_env *env)
 		free(line);
 	}
 	//free(line);
-	return (success_heredoc(token, fd));
+	return (success_heredoc(fd));
 }

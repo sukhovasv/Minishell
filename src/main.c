@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:27:16 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:27:18 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -103,7 +115,7 @@ int	main(void)
         return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	rl_clear_history();
+	//rl_clear_history();
 	clear_history();
 	free_all(&data);
 	return (0);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins_echo_exit.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:19:25 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:19:28 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_str_digit(const char *str)
@@ -38,52 +50,36 @@ int	builtin_echo(char **argv)
 	return (0);
 }
 
-/*int	builtin_exit(char **argv)
+static int	handle_numeric_argument(char *arg, int *status)
+{
+	char	*nptr;
+	int		negative;
+
+	negative = 1;
+	nptr = arg;
+	if (*nptr == '+' || *nptr == '-')
+		if (*nptr++ == '-')
+			negative *= -1;
+	if (!is_str_digit(nptr) || ft_strlen(nptr) > 19)
+		return (0);
+	*status = ft_atoi(nptr) * negative;
+	return (1);
+}
+
+int	builtin_exit(t_minishell_data *data, char **argv, int *exitcode)
 {
 	int	status;
 
 	status = 0;
 	if (argv[1])
 	{
-		if (!is_str_digit(argv[1]))
-		{
-			ft_putstr_fd("exit: ", 2);
-			ft_putstr_fd(argv[1], 2);
-			ft_putendl_fd(": numeric argument required", 2);
-			exit(255);
-		}
-		status = ft_atoi(argv[1]);
-		if (argv[2])
-		{
-			ft_putendl_fd("exit: too many arguments", 2);
-			return (1);
-		}
-	}
-	exit(status & 0xFF);
-}*/
-
-int builtin_exit(t_minishell_data *data, char **argv, int *exitcode)
-{
-    int		status = 0;
-	char	*nptr;
-	int 	negative;
-
-	ft_putstr_fd("exit: ", STDERR_FILENO);
-	if (argv[1])
-	{
-		negative = 1;
-		nptr = argv[1];
-		if (*nptr == '+' || *nptr == '-')
-			if (*nptr++ == '-')
-				negative *= -1;
-		if (!is_str_digit(nptr) || ft_strlen(nptr) > 19)
+		if (!handle_numeric_argument(argv[1], &status))
 		{
 			ft_putstr_fd(argv[1], STDERR_FILENO);
 			ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-			free_all(data);  // Очистка памяти перед выходом
+			free_all(data);
 			exit(2);
 		}
-		status = ft_atoi(nptr) * negative;
 		if (argv[2])
 		{
 			ft_putendl_fd("exit: too many arguments", STDERR_FILENO);
@@ -92,15 +88,15 @@ int builtin_exit(t_minishell_data *data, char **argv, int *exitcode)
 	}
 	else if (exitcode)
 		status = *exitcode;
-	free_all(data);  // Очистка памяти перед выходом
-    exit(status & 0xFF);
+	free_all(data);
+	exit(status & 0xFF);
 }
 
-void builtin_exit_wrapper(t_env *env, int status)
+void	builtin_exit_wrapper(t_env *env, int status)
 {
-    t_minishell_data data;
+	t_minishell_data	data;
 
-	ft_memset(&data, 0, sizeof(t_minishell_data)); // Инициализируем все поля нулями
-    data.env = env;
-	builtin_exit(&data, (char *[]) {"exit", NULL}, &status);
+	ft_memset(&data, 0, sizeof(t_minishell_data));
+	data.env = env;
+	builtin_exit(&data, (char *[]){"exit", NULL}, &status);
 }

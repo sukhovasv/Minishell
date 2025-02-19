@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins_utils_2.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:21:45 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:21:46 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*create_env_string_from_parts(const char *key,
@@ -41,6 +53,7 @@ char	*create_env_string(const char *key, const char *value)
 			return (NULL);
 	}
 	env_str = create_env_string_from_parts(key, clean_value);
+	free(clean_value);
 	if (!env_str)
 		return (NULL);
 	return (env_str);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc_utils_2.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:24:48 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:24:50 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	has_any_quotes(const char *str)
@@ -43,7 +55,7 @@ char	*clean_delimiter(const char *str)
 	return (result);
 }
 
-int	init_heredoc_file(t_token *token)
+/*int	init_heredoc_file(t_token *token)
 {
 	int	fd;
 
@@ -60,4 +72,48 @@ int	init_heredoc_file(t_token *token)
 		return (-1);
 	}
 	return (fd);
+}*/
+
+int init_heredoc_file(t_token *token)
+{
+    int fd;
+
+    ft_putstr_fd("\nDebug: Starting init_heredoc_file\n", 2);
+
+    if (!token)
+    {
+        ft_putstr_fd("Debug: Token is NULL\n", 2);
+        return (-1);
+    }
+
+    ft_putstr_fd("Debug: Checking existing temp_file\n", 2);
+    if (token->temp_file)
+    {
+        ft_putstr_fd("Debug: Freeing existing temp_file\n", 2);
+        free(token->temp_file);
+    }
+
+    ft_putstr_fd("Debug: Creating new temp_file\n", 2);
+    token->temp_file = create_temp_file();
+    if (!token->temp_file)
+    {
+        ft_putstr_fd("Debug: Failed to create temp_file\n", 2);
+        return (-1);
+    }
+
+    ft_putstr_fd("Debug: Opening temp_file: ", 2);
+    ft_putstr_fd(token->temp_file, 2);
+    ft_putstr_fd("\n", 2);
+
+    fd = open(token->temp_file, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (fd == -1)
+    {
+        ft_putstr_fd("Debug: Failed to open temp_file\n", 2);
+        free(token->temp_file);
+        token->temp_file = NULL;
+        return (-1);
+    }
+
+    ft_putstr_fd("Debug: Successfully created heredoc file\n", 2);
+    return (fd);
 }

@@ -19,7 +19,7 @@ SRC_FILES := ft_atoi.c mem/ft_bzero.c mem/ft_calloc.c ft_isalnum.c ft_isalpha.c 
 OBJ_DIR 	:= obj
 OBJ_FILES 	= $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
 HEADER 		:= -I ../../include/
-LIB_COMMAND := ar rcsP
+LIB_COMMAND := ar rcs
 
 RM 			:= rm -f
 
