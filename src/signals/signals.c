@@ -82,7 +82,7 @@ void setup_parent_signals(t_env *env)
 			sa->sa_sigaction = &handle_sigint;
 		}
 		if (sigaction((int)(*signals)[i], sa, old_sa) != 0)
-			exit(EXIT_FAILURE); //todo
+			builtin_exit_wrapper(env, EXIT_FAILURE);
 	}
 }
 
@@ -102,7 +102,7 @@ void	reset_sighandlers(t_env *env)
 	{
 		if (sigaction((int)(*signals)[i], &env->old_sigactions[i], NULL))
 		{
-			exit(EXIT_FAILURE); //todo
+			builtin_exit_wrapper(env, EXIT_FAILURE);
 		}
 	}
 	signal(SIGTSTP, SIG_IGN);
