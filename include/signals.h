@@ -23,6 +23,7 @@ void setup_parent_signals(t_env *env);
 void ignore_signals(void);
 void handle_pending_signals(void);
 void setup_heredoc_signals(void);
+void	reset_sighandlers(t_env *env);
 
 
 #endif
