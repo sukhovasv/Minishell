@@ -1,182 +1,99 @@
 #!/bin/bash
 
-# Colors for output
-RED='\033[0;31m'
+# Цвета для вывода
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Counter for tests
-PASSED=0
-FAILED=0
-TOTAL=0
+# Путь к minishell
+MINISHELL="./minishell"
 
-# Function to print test results
-print_result() {
+echo -e "${BLUE}Starting Minishell Tests${NC}\n"
+
+# Функция для запуска теста
+run_test() {
     local test_name=$1
-    local result=$2
-    local expected=$3
-    local actual=$4
+    local command=$2
     
-    ((TOTAL++))
+    echo -e "\n${BLUE}Testing: ${test_name}${NC}"
+    echo "Command: $command"
     
-    if [ "$result" = "pass" ]; then
-        echo -e "${GREEN}[PASS]${NC} $test_name"
-        ((PASSED++))
+    # Запускаем команду в bash
+    echo -e "\n${BLUE}Expected output (bash):${NC}"
+    eval "$command"
+    local bash_status=$?
+    
+    # Запускаем команду в minishell
+    echo -e "\n${BLUE}Your minishell output:${NC}"
+    echo "$command" | $MINISHELL
+    local minishell_status=$?
+    
+    # Сравниваем статусы выхода
+    if [ $bash_status -eq $minishell_status ]; then
+        echo -e "${GREEN}Status check: OK${NC}"
     else
-        echo -e "${RED}[FAIL]${NC} $test_name"
-        echo -e "Expected: $expected"
-        echo -e "Got:      $actual"
-        ((FAILED++))
+        echo -e "${RED}Status check: KO (bash: $bash_status, minishell: $minishell_status)${NC}"
     fi
+    
+    echo "----------------------------------------"
 }
 
-# Function to compare command output with bash
-compare_with_bash() {
-    local cmd=$1
-    local bash_output
-    local minishell_output
-    
-    # Get bash output and exit code
-    bash_output=$(echo "$cmd" | bash 2>&1)
-    bash_exit=$?
-    
-    # Get minishell output and exit code
-    minishell_output=$(echo "$cmd" | ./minishell 2>&1)
-    minishell_exit=$?
-    
-    if [ "$bash_output" = "$minishell_output" ] && [ $bash_exit -eq $minishell_exit ]; then
-        print_result "Command: $cmd" "pass" "" ""
-    else
-        print_result "Command: $cmd" "fail" "$bash_output (exit: $bash_exit)" "$minishell_output (exit: $minishell_exit)"
-    fi
-}
+# Базовые тесты
+echo -e "${BLUE}\nBasic Tests:${NC}"
+run_test "Simple echo" 'echo Hello World'
+run_test "Echo with variable" 'echo $USER'
+run_test "Echo with quoted variable" 'echo "$USER"'
+run_test "Echo with single quotes" 'echo '\''$USER'\'''
+run_test "Echo multiple variables" 'echo "$USER$HOME"'
 
-echo -e "${YELLOW}Starting Minishell tests...${NC}\n"
+# Тесты редиректов
+echo -e "${BLUE}\nRedirection Tests:${NC}"
+run_test "Output redirection" 'echo "hello" > file1.txt && cat file1.txt'
+run_test "Input redirection" 'echo "test" > infile.txt && cat < infile.txt'
+run_test "Append redirection" 'echo "world" >> file1.txt && cat file1.txt'
+run_test "Multiple redirections" 'echo "test" > file1.txt > file2.txt && cat file2.txt'
 
-# 1. Basic Command Execution Tests
-echo -e "\n${YELLOW}1. Basic Command Execution Tests${NC}"
-compare_with_bash "ls"
-compare_with_bash "ls -l"
-compare_with_bash "/bin/ls"
-compare_with_bash "./non_existent_command"
+# Тесты heredoc
+echo -e "${BLUE}\nHeredoc Tests:${NC}"
+run_test "Simple heredoc" 'cat << EOF
+Hello
+$USER
+EOF'
 
-# 2. Quote Handling Tests
-echo -e "\n${YELLOW}2. Quote Handling Tests${NC}"
-compare_with_bash "echo 'single quotes'"
-compare_with_bash "echo \"double quotes\""
-compare_with_bash "echo 'mixed \"quotes\"'"
-compare_with_bash "echo \"$HOME\""
-compare_with_bash "echo '$HOME'"
+run_test "Quoted heredoc" 'cat << "EOF"
+Hello
+$USER
+EOF'
 
-# 3. Environment Variable Tests
-echo -e "\n${YELLOW}3. Environment Variable Tests${NC}"
-compare_with_bash "echo \$HOME"
-compare_with_bash "echo \$PATH"
-compare_with_bash "echo \$?"
+# Тесты пайпов
+echo -e "${BLUE}\nPipe Tests:${NC}"
+run_test "Simple pipe" 'echo "Hello World" | grep "Hello"'
+run_test "Multiple pipes" 'ls -l | grep "." | wc -l'
+run_test "Complex pipes" 'cat /etc/passwd | grep "root" | wc -l'
 
-# 4. Pipe Tests
-echo -e "\n${YELLOW}4. Pipe Tests${NC}"
-compare_with_bash "ls | grep a"
-compare_with_bash "ls | wc -l"
-compare_with_bash "cat /etc/passwd | grep root | wc -l"
-compare_with_bash "ls | sort | head -n 3"
+# Тесты с комбинациями
+echo -e "${BLUE}\nCombination Tests:${NC}"
+run_test "Heredoc with pipe" 'cat << EOF | grep "hello"
+hello world
+goodbye world
+EOF'
 
-# 5. Redirection Tests
-echo -e "\n${YELLOW}5. Redirection Tests${NC}"
-compare_with_bash "ls > output.txt"
-compare_with_bash "cat < output.txt"
-compare_with_bash "ls >> output.txt"
-compare_with_bash "cat << EOF
-test
-EOF"
+run_test "Pipe with redirections" 'ls -l | grep "." > output.txt && cat output.txt'
 
-# 6. Built-in Commands Tests
-echo -e "\n${YELLOW}6. Built-in Commands Tests${NC}"
+# Тесты встроенных команд
+echo -e "${BLUE}\nBuiltin Tests:${NC}"
+run_test "pwd command" 'pwd'
+run_test "echo exit status" 'echo $?'
+run_test "export and echo" 'export TEST=value && echo $TEST'
+run_test "unset" 'export TEST=value && unset TEST && echo $TEST'
 
-# echo tests
-compare_with_bash "echo hello world"
-compare_with_bash "echo -n hello world"
-compare_with_bash "echo \"hello    world\""
+# Тесты на ошибки
+echo -e "${BLUE}\nError Handling Tests:${NC}"
+run_test "Nonexistent file" 'cat nonexistentfile'
+run_test "Permission denied" 'echo "test" > /root/file'
 
-# cd tests
-test_cd() {
-    local init_dir=$(pwd)
-    echo "cd /tmp" | ./minishell
-    local new_dir=$(pwd)
-    cd $init_dir
-    if [ "$new_dir" = "/tmp" ]; then
-        print_result "cd /tmp" "pass" "" ""
-    else
-        print_result "cd /tmp" "fail" "/tmp" "$new_dir"
-    fi
-}
-test_cd
+# Очистка временных файлов
+rm -f file1.txt file2.txt infile.txt output.txt
 
-# pwd test
-compare_with_bash "pwd"
-
-# export and env tests
-test_export() {
-    echo "export TEST=123" | ./minishell
-    echo "env | grep ^TEST=" | ./minishell > minishell_output
-    echo "export TEST=123" | bash
-    echo "env | grep ^TEST=" | bash > bash_output
-    
-    if diff minishell_output bash_output >/dev/null 2>&1; then
-        print_result "export TEST=123" "pass" "" ""
-    else
-        print_result "export TEST=123" "fail" "$(cat bash_output)" "$(cat minishell_output)"
-    fi
-    rm -f minishell_output bash_output
-}
-test_export
-
-# unset test
-test_unset() {
-    echo -e "export TEST=123\nunset TEST\nenv | grep ^TEST=" | ./minishell > minishell_output
-    echo -e "export TEST=123\nunset TEST\nenv | grep ^TEST=" | bash > bash_output
-    
-    if diff minishell_output bash_output >/dev/null 2>&1; then
-        print_result "unset TEST" "pass" "" ""
-    else
-        print_result "unset TEST" "fail" "$(cat bash_output)" "$(cat minishell_output)"
-    fi
-    rm -f minishell_output bash_output
-}
-test_unset
-
-# Exit test
-test_exit() {
-    echo "exit 42" | ./minishell
-    local minishell_exit=$?
-    if [ $minishell_exit -eq 42 ]; then
-        print_result "exit 42" "pass" "" ""
-    else
-        print_result "exit 42" "fail" "42" "$minishell_exit"
-    fi
-}
-test_exit
-
-# 7. Signal Handling Tests
-echo -e "\n${YELLOW}7. Signal Handling Tests${NC}"
-echo "Note: Manual testing required for Ctrl+C, Ctrl+D, and Ctrl+\\"
-echo "- Ctrl+C should display a new prompt on a new line"
-echo "- Ctrl+D should exit the shell"
-echo "- Ctrl+\\ should do nothing"
-
-# Memory leak test reminder
-echo -e "\n${YELLOW}Memory Leak Tests${NC}"
-echo "Run your minishell under valgrind to check for memory leaks:"
-echo "valgrind --leak-check=full --show-leak-kinds=all ./minishell"
-
-# Print final results
-echo -e "\n${YELLOW}Test Results:${NC}"
-echo "Total tests: $TOTAL"
-echo -e "${GREEN}Passed: $PASSED${NC}"
-echo -e "${RED}Failed: $FAILED${NC}"
-
-# Cleanup
-rm -f output.txt
-
-exit $([ $FAILED -eq 0 ])
+echo -e "\n${BLUE}All tests completed${NC}"

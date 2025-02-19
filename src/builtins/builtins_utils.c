@@ -1,48 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:21:58 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:22:00 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-size_t get_env_var_size(const char *key, const char *value)
+static char	*process_value_with_quotes(char *value)
 {
-    return (ft_strlen(key) + ft_strlen(value) + 2);
+	size_t	len;
+	char	*new_value;
+
+	len = ft_strlen(value);
+	if (len < 2 || value[0] != value[len - 1])
+		return (ft_strdup(value));
+	new_value = ft_substr(value, 1, len - 2);
+	return (new_value);
 }
 
-char *create_env_string(const char *key, const char *value)
+static char	*process_value_without_quotes(char *value)
 {
-    char *env_str;
-    size_t size;
+	char	*space_pos;
+	char	*new_value;
 
-    size = get_env_var_size(key, value);
-    env_str = ft_calloc(size, sizeof(char));
-    if (!env_str)
-        return (NULL);
-
-    ft_strlcpy(env_str, key, size);
-    ft_strlcat(env_str, "=", size);
-    ft_strlcat(env_str, value, size);
-    return (env_str);
+	if (!value || value[0] == '\0')
+		return (NULL);
+	space_pos = ft_strchr(value, ' ');
+	if (space_pos)
+		*space_pos = '\0';
+	new_value = ft_strdup(value);
+	return (new_value);
 }
 
-int is_valid_env_name(const char *str)
+char	*process_value(char *value)
 {
-    int i;
-
-    if (!str || !ft_isalpha(str[0]))
-        return (0);
-    i = 1;
-    while (str[i])
-    {
-        if (!ft_isalnum(str[i]) && str[i] != '_')
-            return (0);
-        i++;
-    }
-    return (1);
-}
-
-size_t count_env_size(char **env)
-{
-    size_t i;
-
-    i = 0;
-    while (env[i])
-        i++;
-    return (i);
+	if (!value || value[0] == '\0')
+		return (NULL);
+	if ((value[0] == '"' || value[0] == '\'')
+		&& value[ft_strlen(value) - 1] == value[0])
+		return (process_value_with_quotes(value));
+	return (process_value_without_quotes(value));
 }
