@@ -15,6 +15,7 @@
 static void	handle_first_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
+	reset_sighandlers(env);
 	close(pipefd[0]);
 	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 		builtin_exit_wrapper(env, 1);
@@ -26,6 +27,7 @@ static void	handle_first_child(int *pipefd, t_ast_node *node,
 static void	handle_second_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
+	reset_sighandlers(env);
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
 		builtin_exit_wrapper(env, 1);

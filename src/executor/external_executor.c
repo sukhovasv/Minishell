@@ -23,7 +23,7 @@ int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 	{
 		if (!handle_command_redirections(node, fd_info))
 			exit (1);
-		setup_child_signals();
+		reset_sighandlers(env);
 		status = search_and_execute(node->args, env);
 		exit(status);
 	}
