@@ -43,5 +43,6 @@ int		handle_non_heredoc_redirections(t_redirect *redirects,
 			t_fd_info *fd_info);
 void	free_heredoc_data(t_heredoc_data *heredoc);
 void	free_all(t_minishell_data *data);
+int		is_empty_command(char *line);
 
 #endif

@@ -56,6 +56,8 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 
 	if (!input || !*input)
 		return ;
+	if (is_empty_command(input))
+		return ;
 	if (is_interactive)
 		add_history(input);
 	tokens = tokenize(input, env);
@@ -63,7 +65,10 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 	{
 		ast = build_ast(tokens);
 		if (!ast)
-			return;
+		{
+			free_tokens(tokens);
+			return ;
+		}
 		env->ast = ast;
 		env->tokens = tokens;
 		status = execute_ast_node(ast, env, fd_info);

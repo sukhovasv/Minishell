@@ -123,16 +123,6 @@ int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
-<<<<<<< HEAD
 	cleanup_heredocs_for_node(node->left);
-=======
-	sigaction(SIGINT, &env->new_sigactions[0], NULL);
-	if (node->left && node->left->redirects)
-	{
-		count = prepare_heredoc_data(node->left->redirects, &heredocs);
-		if (count > 0)
-			cleanup_heredoc_files(heredocs, count);
-	}
->>>>>>> origin/dev
 	return (ft_decode_wstatus(status));
 }
