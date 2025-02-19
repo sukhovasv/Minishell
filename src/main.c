@@ -94,7 +94,7 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 		if (*input)
 		{
 			process_command(input, env, fd_info, is_interactive);
-			rl_already_prompted = 0;
+//			rl_already_prompted = 0;
 		}
 		free(input);
 	}
