@@ -15,6 +15,7 @@
 static void	handle_first_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
+	reset_sighandlers(env);
 	close(pipefd[0]);
 	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
 		builtin_exit_wrapper(env, 1);
@@ -26,6 +27,7 @@ static void	handle_first_child(int *pipefd, t_ast_node *node,
 static void	handle_second_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
+	reset_sighandlers(env);
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
 		builtin_exit_wrapper(env, 1);
@@ -95,6 +97,7 @@ int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 
 	if (pipe(pipefd) == -1)
 		return (1);
+	signal(SIGINT, SIG_IGN);
 	pid1 = fork();
 	if (pid1 < 0)
 		return (handle_pipe_error(pipefd));
@@ -109,6 +112,7 @@ int	execute_pipe_node(t_ast_node *node, t_env *env, t_fd_info *fd_info)
 	close(pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
+	sigaction(SIGINT, &env->new_sigactions[0], NULL);
 	if (node->left && node->left->redirects)
 	{
 		count = prepare_heredoc_data(node->left->redirects, &heredocs);

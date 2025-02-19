@@ -69,10 +69,10 @@ static int	cleanup_heredoc(char *line, t_token *token, int fd)
 	return (1);
 }*/
 
-static int	success_heredoc(int fd)
+static int	success_heredoc(int fd, t_env *env)
 {
 	close(fd);
-	setup_signals();
+	setup_signals(env);
 	return (1);
 }
 
@@ -128,5 +128,5 @@ int	handle_heredoc_content(t_token *token, t_env *env)
 		free(line);
 	}
 	//free(line);
-	return (success_heredoc(fd));
+	return (success_heredoc(fd, env));
 }

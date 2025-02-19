@@ -18,12 +18,13 @@ int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 	int		status;
 	int		wstatus;
 
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == 0)
 	{
 		if (!handle_command_redirections(node, fd_info))
 			exit (1);
-		setup_child_signals();
+		reset_sighandlers(env);
 		status = search_and_execute(node->args, env);
 		exit(status);
 	}
@@ -31,6 +32,7 @@ int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 		return (perror("minishell: fork"), EXIT_FAILURE);
 	else
 		status = (ft_decode_wstatus(ft_wait_for_pid(&wstatus, pid)));
+	sigaction(SIGINT, &env->new_sigactions[0], NULL);
 	restore_redirections(fd_info);
 	return (status);
 }
