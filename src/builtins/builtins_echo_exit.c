@@ -33,7 +33,7 @@ int	builtin_echo(char **argv)
 
 	n_flag = 0;
 	i = 1;
-	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
+	if (argv[i] && ft_strncmp(argv[i], "-n", 2) == 0)
 	{
 		n_flag = 1;
 		i++;

@@ -12,21 +12,6 @@
 
 #include "minishell.h"
 
-/*void	free_redirections(t_redirect *redirects)
-{
-	t_redirect	*curr;
-	t_redirect	*next;
-
-	curr = redirects;
-	while (curr)
-	{
-		next = curr->next;
-		free(curr->file);
-		free(curr);
-		curr = next;
-	}
-}*/
-
 void	free_args(char **args)
 {
 	int	i;
