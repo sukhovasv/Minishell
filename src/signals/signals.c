@@ -35,10 +35,10 @@ static void handle_sigint_heredoc(int sig)
     exit(130);
 }
 
-static void handle_sigquit(int sig)
-{
-    (void)sig;
-}
+//static void handle_sigquit(int sig)
+//{
+//    (void)sig;
+//}
 
 static void handle_signal_child(int sig)
 {

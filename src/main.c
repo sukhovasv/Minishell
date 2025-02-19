@@ -19,7 +19,7 @@ static void	init_shell(t_env **env, t_fd_info *fd_info, int *is_interactive)
 	extern char	**environ;
 
 	*env = init_env(environ);
-	setup_signals();
+	setup_signals(*env);
 	*is_interactive = isatty(STDIN_FILENO) && isatty(STDERR_FILENO);
 	fd_info->saved_stdout = -1;
 	fd_info->saved_stdin = -1;
