@@ -38,14 +38,14 @@ int	handle_signals_and_fork(t_heredoc_data *heredocs, int count, t_env *env)
 		return (-1);
 	if (pid == 0)
 	{
-		setup_heredoc_signals();
+		setup_heredoc_signals(); //todo?
 		if (process_heredocs_in_child(heredocs, count, env) != 0)
 			builtin_exit_wrapper(env, 1);
 		builtin_exit_wrapper(env, 0);
 	}
 	ignore_signals();
 	waitpid(pid, &status, 0);
-	setup_signals();
+	setup_signals(env);
 	if (g_signal_received == SIGINT)
 	{
 		g_signal_received = 0;
