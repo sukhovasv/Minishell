@@ -84,8 +84,6 @@ void setup_parent_signals(t_env *env)
 		if (sigaction((int)(*signals)[i], sa, old_sa) != 0)
 			exit(EXIT_FAILURE); //todo
 	}
-//    signal(SIGINT, handle_sigint);
-//    signal(SIGQUIT, handle_sigquit);
 }
 
 void	reset_sighandlers(t_env *env)
@@ -107,6 +105,7 @@ void	reset_sighandlers(t_env *env)
 			exit(EXIT_FAILURE); //todo
 		}
 	}
+	signal(SIGTSTP, SIG_IGN);
 }
 
 void setup_heredoc_signals(void)
