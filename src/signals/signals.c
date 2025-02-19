@@ -76,7 +76,7 @@ void setup_parent_signals(t_env *env)
 //    signal(SIGQUIT, handle_sigquit);
 }
 
-void	ft_reset_sighandlers(t_env *env)
+void	reset_sighandlers(t_env *env)
 {
 	int				i;
 	const	char	(*signals)[5] = &(char [5]){
