@@ -41,6 +41,7 @@ char	*create_env_string(const char *key, const char *value)
 			return (NULL);
 	}
 	env_str = create_env_string_from_parts(key, clean_value);
+	free(clean_value);
 	if (!env_str)
 		return (NULL);
 	return (env_str);

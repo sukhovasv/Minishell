@@ -1,8 +1,8 @@
 NAME		= minishell
 
 CC 			= cc
-DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3 -fsanitize=address -fsanitize=undefined
-#DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3
+#DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3 -fsanitize=address -fsanitize=undefined
+DEBUG_FLAGS	:= -O0 -g3 -gdwarf-3
 CFLAGS 		= -DDEBUG -Wall -Wextra -Werror
 
 # Directories
@@ -16,7 +16,7 @@ SRC_FILES	= \
 	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/executor/external_executor.c $(SRC_DIR)/executor/pipe_node_executor.c \
 	$(SRC_DIR)/executor/ast_executor.c $(SRC_DIR)/executor/redirections_executor.c \
-	$(SRC_DIR)/executor/pipe_command_executor.c \
+	$(SRC_DIR)/executor/pipe_command_executor.c $(SRC_DIR)/executor/utils_executor.c \
 	$(SRC_DIR)/heredoc/heredoc_handlers.c $(SRC_DIR)/heredoc/heredoc_init.c \
 	$(SRC_DIR)/heredoc/heredoc_utils.c $(SRC_DIR)/heredoc/heredoc_utils_2.c \
 	$(SRC_DIR)/heredoc/heredoc_process.c $(SRC_DIR)/heredoc/heredoc_content.c \

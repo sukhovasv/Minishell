@@ -103,7 +103,7 @@ int	main(void)
         return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	rl_clear_history();
+	//rl_clear_history();
 	clear_history();
 	free_all(&data);
 	return (0);
