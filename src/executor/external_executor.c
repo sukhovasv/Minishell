@@ -51,13 +51,6 @@ int	search_and_execute(char **argv, t_env *env)
 		status = try_path_execution(path, argv, fullpath);
 		free(path);
 	}
-	if (status == -1 || status == EX_NOTFOUND)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(argv[0], 2);
-		ft_putendl_fd(": command not found", 2);
-		return (127);
-	}
 	if (status == -1)
 		perror(path);
 	else
