@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   types.h                                  			:+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:19:07 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:19:11 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TYPES_H
 # define TYPES_H
 
@@ -25,7 +37,6 @@ typedef struct s_parser_state
 	int		in_quotes;
 	char	quote_char;
 }	t_parser_state;
-
 
 typedef enum e_token_type
 {
@@ -68,13 +79,6 @@ typedef struct s_heredoc_data
 	t_token	*token;
 }	t_heredoc_data;
 
-/*typedef struct s_heredoc
-{
-	char	*content;
-	char	*temp_file;
-	int		temp_fd;
-}	t_heredoc;*/
-
 typedef struct s_fd_info
 {
 	int	saved_stdout;
@@ -93,7 +97,7 @@ typedef struct s_quote_state
 	size_t	len;
 }	t_quote_state;
 
-typedef enum	e_ast_type
+typedef enum e_ast_type
 {
 	AST_COMMAND,
 	AST_PIPE,
@@ -112,19 +116,15 @@ typedef struct s_ast_node
 	int					heredoc_count;
 }	t_ast_node;
 
-
-typedef struct sigaction	t_sigaction;
-
 typedef struct s_env
 {
-	char		**environ;
-	int			last_status;
-	t_ast_node	*ast;
-	t_token		*tokens;
-	t_sigaction old_sigactions[5];
-	t_sigaction new_sigactions[5];
+	char				**environ;
+	int					last_status;
+	t_ast_node			*ast;
+	t_token				*tokens;
+	struct sigaction	old_sigactions[5];
+	struct sigaction	new_sigactions[5];
 }	t_env;
-
 
 typedef struct s_word_parser
 {
@@ -147,12 +147,11 @@ typedef struct s_str_processor
 
 typedef struct s_minishell_data
 {
-    t_env       	*env;
-    t_token     	*tokens;
+	t_env			*env;
+	t_token			*tokens;
 	t_redirect		*redirects;
-    t_heredoc_data	*heredoc;
-    char        	*input;
-} t_minishell_data;
-
+	t_heredoc_data	*heredoc;
+	char			*input;
+}	t_minishell_data;
 
 #endif

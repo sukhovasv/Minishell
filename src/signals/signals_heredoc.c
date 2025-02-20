@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncpy.c                                       :+:      :+:    :+:   */
+/*   signals_heredoc.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yberezhn <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 14:40:00 by yberezhn          #+#    #+#             */
-/*   Updated: 2023/11/07 14:40:02 by yberezhn         ###   ########.fr       */
+/*   Created: 2025/02/19 13:28:41 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:28:43 by ssukhova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*ft_strncpy(char *dst, const char *src, unsigned int n)
-{
-	char *const	dest = dst;
-	const char	*s = src;
+#include "minishell.h"
 
-	while (n-- != 0)
-	{
-		*dst++ = *s;
-		if (*s++ == 0)
-		{
-			while (n-- != 0)
-				*dst++ = '\0';
-			break ;
-		}
-	}
-	return (dest);
+static void	handle_sigint_heredoc(int sig)
+{
+	(void)sig;
+	g_signal_received = SIGINT;
+	write(1, "\n", 1);
+	exit(130);
+}
+
+void	setup_heredoc_signals(void)
+{
+	signal(SIGINT, handle_sigint_heredoc);
+	signal(SIGQUIT, SIG_IGN);
 }

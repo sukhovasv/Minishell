@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.h                                  		:+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:19:07 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:19:11 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HEREDOC_H
 # define HEREDOC_H
 
@@ -47,5 +59,11 @@ int		has_any_quotes(const char *str);
 int		should_expand_heredoc_vars(const char *delimiter);
 char	*clean_delimiter(const char *str);
 int		init_heredoc_file(t_token *token);
+void	write_line_to_heredoc(char *line, int fd);
+char	*handle_variable_expansion(char *line, t_env *env);
+int		check_heredoc_line(char **line, t_token *token,
+			t_env *env, int expand_vars);
+int		cleanup_heredoc(char *line, t_token *token, int fd);
+int		success_heredoc(int fd, t_env *env);
 
 #endif

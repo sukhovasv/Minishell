@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                  			:+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssukhova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/19 13:19:07 by ssukhova          #+#    #+#             */
+/*   Updated: 2025/02/19 13:19:11 by ssukhova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef UTILS_H
 # define UTILS_H
 
@@ -43,5 +55,6 @@ int		handle_non_heredoc_redirections(t_redirect *redirects,
 			t_fd_info *fd_info);
 void	free_heredoc_data(t_heredoc_data *heredoc);
 void	free_all(t_minishell_data *data);
+int		is_empty_command(char *line);
 
 #endif

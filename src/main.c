@@ -63,7 +63,10 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 	{
 		ast = build_ast(tokens);
 		if (!ast)
-			return;
+		{
+			free_tokens(tokens);
+			return ;
+		}
 		env->ast = ast;
 		env->tokens = tokens;
 		status = execute_ast_node(ast, env, fd_info);
@@ -94,7 +97,7 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 		if (*input)
 		{
 			process_command(input, env, fd_info, is_interactive);
-//			rl_already_prompted = 0;
+			rl_already_prompted = 0;
 		}
 		free(input);
 	}
@@ -102,19 +105,19 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 
 int	main(void)
 {
-	t_minishell_data data;
-	t_fd_info		fd_info;
-	int				is_interactive;
-	struct termios	original;
+	t_minishell_data	data;
+	t_fd_info			fd_info;
+	int					is_interactive;
+	struct termios		original;
 
 	ft_memset(&data, 0, sizeof(t_minishell_data));
 	tcgetattr(STDIN_FILENO, &original);
 	init_shell(&data.env, &fd_info, &is_interactive);
 	if (!data.env)
-        return (EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	//rl_clear_history();
+	rl_clear_history();
 	clear_history();
 	free_all(&data);
 	return (0);

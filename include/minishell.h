@@ -35,7 +35,6 @@
 # include "parser.h"
 # include "utils.h"
 
-
 # define EX_NOEXEC		126
 # define EX_NOTFOUND	127
 
