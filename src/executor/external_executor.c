@@ -57,7 +57,7 @@ int	search_and_execute(char **argv, t_env *env)
 		perror(argv[0]);
 	}
 	else
-		status = try_execute(fullpath, argv, env->environ);
+		status = try_execute(fullpath, argv, env);
 	return (status);
 }
 
