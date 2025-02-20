@@ -56,8 +56,11 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 
 	if (!input || !*input)
 		return ;
-	if (is_empty_command(input))
+	/*if (is_empty_command(input))
+	{
+		free(input);
 		return ;
+	}*/
 	if (is_interactive)
 		add_history(input);
 	tokens = tokenize(input, env);
@@ -119,7 +122,7 @@ int	main(void)
         return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	//rl_clear_history();
+	rl_clear_history();
 	clear_history();
 	free_all(&data);
 	return (0);
