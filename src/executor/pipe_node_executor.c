@@ -27,7 +27,7 @@ void	handle_first_child(int *pipefd, t_ast_node *node,
 void	handle_second_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
-	int status;
+	int	status;
 
 	status = EXIT_FAILURE;
 	reset_sighandlers(env);
