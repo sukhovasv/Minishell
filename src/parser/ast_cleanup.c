@@ -36,23 +36,25 @@ void	free_ast_node_nonrec(t_ast_node *node)
 	free(node);
 }
 
-void free_ast_node(t_ast_node *node)
+void	free_ast_node(t_ast_node *node)
 {
-    if (!node)
-        return;
-    if (node->args)
-    {
-        int i = 0;
-        while (node->args[i])
-            free(node->args[i++]);
-        free(node->args);
-    }
-    free_redirects(node->redirects);
-    if (node->heredoc_data)  
-        free_heredoc_data(node->heredoc_data);
-    free_ast_node(node->left);
-    free_ast_node(node->right);
-    free(node);
+	int	i;
+
+	if (!node)
+		return ;
+	if (node->args)
+	{
+		i = 0;
+		while (node->args[i])
+			free(node->args[i++]);
+		free(node->args);
+	}
+	free_redirects(node->redirects);
+	if (node->heredoc_data)
+		free_heredoc_data(node->heredoc_data);
+	free_ast_node(node->left);
+	free_ast_node(node->right);
+	free(node);
 }
 
 void	free_redirects(t_redirect *redirects)
