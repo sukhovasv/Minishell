@@ -14,3 +14,9 @@ bin
 obj
 cmake-build-debug
 cmake-build-docker
+Dockerfile
+docker-compose.yml
+README.md
+*.sh
+.gdbinit
+readline.supp
