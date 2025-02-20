@@ -27,16 +27,19 @@ void	handle_first_child(int *pipefd, t_ast_node *node,
 void	handle_second_child(int *pipefd, t_ast_node *node,
 			t_env *env, t_fd_info *fd_info)
 {
+	int status;
+
+	status = EXIT_FAILURE;
 	reset_sighandlers(env);
 	close(pipefd[1]);
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
-		builtin_exit_wrapper(env, 1);
+		builtin_exit_wrapper(env, status);
 	close(pipefd[0]);
 	if (node->right->type == AST_PIPE)
-		execute_pipe_node(node->right, env, fd_info);
+		status = execute_pipe_node(node->right, env, fd_info);
 	else
 		execute_command_in_pipe(node->right, env, fd_info);
-	builtin_exit_wrapper(env, 1);
+	builtin_exit_wrapper(env, status);
 }
 
 int	handle_pipe_error(int *pipefd)
