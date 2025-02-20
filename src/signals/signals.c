@@ -21,7 +21,7 @@ void	setup_child_signals(void)
 	signal(SIGQUIT, handle_signal_child);
 }
 
-static void	setup_sigint_handler(t_sigaction *sa)
+static void	setup_sigint_handler(struct sigaction *sa)
 {
 	sigemptyset(&sa->sa_mask);
 	sa->sa_flags = SA_SIGINFO | SA_RESTART;
@@ -30,9 +30,9 @@ static void	setup_sigint_handler(t_sigaction *sa)
 
 void	setup_parent_signals(t_env *env)
 {
-	t_sigaction		*sa;
-	t_sigaction		*old_sa;
-	int				i;
+	struct sigaction	*sa;
+	struct sigaction	*old_sa;
+	int					i;
 	const	char	(*signals)[5] = &(char [5]){
 		SIGINT,
 		SIGTERM,
