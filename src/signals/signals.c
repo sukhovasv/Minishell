@@ -33,7 +33,7 @@ void	setup_parent_signals(t_env *env)
 	struct sigaction	*sa;
 	struct sigaction	*old_sa;
 	int					i;
-	const	char	(*signals)[5] = &(char [5]){
+	const	char		(*signals)[5] = &(char [5]){
 		SIGINT,
 		SIGTERM,
 		SIGQUIT,
