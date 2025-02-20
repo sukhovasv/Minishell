@@ -56,11 +56,6 @@ static void	process_command(char *input, t_env *env, t_fd_info *fd_info,
 
 	if (!input || !*input)
 		return ;
-	/*if (is_empty_command(input))
-	{
-		free(input);
-		return ;
-	}*/
 	if (is_interactive)
 		add_history(input);
 	tokens = tokenize(input, env);
@@ -102,7 +97,7 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 		if (*input)
 		{
 			process_command(input, env, fd_info, is_interactive);
-//			rl_already_prompted = 0;
+			rl_already_prompted = 0;
 		}
 		free(input);
 	}
@@ -110,16 +105,16 @@ static void	shell_loop(t_env *env, t_fd_info *fd_info, int is_interactive)
 
 int	main(void)
 {
-	t_minishell_data data;
-	t_fd_info		fd_info;
-	int				is_interactive;
-	struct termios	original;
+	t_minishell_data	data;
+	t_fd_info			fd_info;
+	int					is_interactive;
+	struct termios		original;
 
 	ft_memset(&data, 0, sizeof(t_minishell_data));
 	tcgetattr(STDIN_FILENO, &original);
 	init_shell(&data.env, &fd_info, &is_interactive);
 	if (!data.env)
-        return (EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	shell_loop(data.env, &fd_info, is_interactive);
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
 	rl_clear_history();
