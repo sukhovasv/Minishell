@@ -19,19 +19,10 @@ void	handle_sigint(int sig, siginfo_t *siginfo, void *f)
 	(void)siginfo;
 	(void)f;
 	g_signal_received = sig;
-	write(1, "\n", 1);
+	printf("\n");
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-}
-
-void	handle_signal_child(int sig)
-{
-	if (sig == SIGQUIT)
-	{
-		write(2, "Quit: 3\n", 8);
-	}
-	exit(128 + sig);
 }
 
 void	handle_pending_signals(void)

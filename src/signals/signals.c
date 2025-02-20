@@ -15,12 +15,6 @@
 
 volatile sig_atomic_t	g_signal_received = 0;
 
-void	setup_child_signals(void)
-{
-	signal(SIGINT, handle_signal_child);
-	signal(SIGQUIT, handle_signal_child);
-}
-
 static void	setup_sigint_handler(struct sigaction *sa)
 {
 	sigemptyset(&sa->sa_mask);

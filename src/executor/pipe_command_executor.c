@@ -59,7 +59,6 @@ void	execute_command_in_pipe(t_ast_node *cmd, t_env *env, t_fd_info *fd_info)
 		status = execute_builtin_wrapper(cmd->args, env);
 		builtin_exit_wrapper(env, status);
 	}
-	setup_child_signals();
 	if (ft_strchr(cmd->args[0], '/'))
 		execve(cmd->args[0], cmd->args, env->environ);
 	else
