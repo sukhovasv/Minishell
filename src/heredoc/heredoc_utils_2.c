@@ -59,6 +59,8 @@ int	init_heredoc_file(t_token *token)
 {
 	int	fd;
 
+	if (!token)
+		return (-1);
 	if (token->temp_file)
 		free(token->temp_file);
 	token->temp_file = create_temp_file();
