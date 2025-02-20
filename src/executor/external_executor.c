@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sysexits.h>
 #include "minishell.h"
 
 int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
@@ -23,10 +24,10 @@ int	execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 	if (pid == 0)
 	{
 		if (!handle_command_redirections(node, fd_info))
-			exit (1);
+			builtin_exit_wrapper(env, EXIT_FAILURE);
 		reset_sighandlers(env);
 		status = search_and_execute(node->args, env);
-		exit(status);
+		builtin_exit_wrapper(env, status);
 	}
 	else if (pid < 0)
 		return (perror("minishell: fork"), EXIT_FAILURE);
@@ -91,15 +92,19 @@ int	try_path_execution(char *path, char **argv, char *const fullpath)
 
 int	try_execute(char *cmd, char **argv, t_env *env)
 {
+	int status;
+
+	status = EX_OK;
 	if (access(cmd, F_OK) == -1)
-		return (0);
-	if (access(cmd, X_OK) == -1)
+		status = EX_NOTFOUND;
+	else
 	{
+		status = execve(cmd, argv, env->environ);
+		if (errno == EACCES)
+			status = EX_NOEXEC;
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(cmd, 2);
 		ft_putendl_fd(": Permission denied", 2);
-		builtin_exit_wrapper(env, 126);
 	}
-	execve(cmd, argv, env->environ);
-	return (0);
+	return (status);
 }
