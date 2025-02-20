@@ -92,7 +92,7 @@ int	try_path_execution(char *path, char **argv, char *const fullpath)
 
 int	try_execute(char *cmd, char **argv, t_env *env)
 {
-	int status;
+	int	status;
 
 	status = EX_OK;
 	if (access(cmd, F_OK) == -1)
