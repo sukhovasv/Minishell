@@ -37,7 +37,6 @@ int			execute_builtin_command(t_ast_node *node, t_env *env,
 				t_fd_info *fd_info);
 int			execute_non_builtin(char **argv, t_env *env);
 int			search_and_execute(char **argv, t_env *env);
-int			try_execute(char *cmd, char **argv, char **envp);
 char		*get_path_env(char **environ);
 char		*find_command_in_path(char *cmd);
 int			try_path_execution(char *path, char **argv, char *const fullpath);
@@ -54,7 +53,7 @@ int			execute_external_command(t_ast_node *node, t_fd_info *fd_info,
 				t_env *env);
 int			search_and_execute(char **argv, t_env *env);
 int			try_direct_execution(char **argv, char *fullpath);
-int			try_execute(char *cmd, char **argv, char **envp);
+int			try_execute(char *cmd, char **argv, t_env *env);
 void		handle_first_child(int *pipefd, t_ast_node *node,
 				t_env *env, t_fd_info *fd_info);
 void		handle_second_child(int *pipefd, t_ast_node *node,
