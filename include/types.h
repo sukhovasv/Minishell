@@ -116,9 +116,7 @@ typedef struct s_ast_node
 	int					heredoc_count;
 }	t_ast_node;
 
-//typedef struct sigaction
-//{
-//}	t_sigaction;
+//typedef struct sigaction	t_sigaction;
 
 typedef struct s_env
 {
