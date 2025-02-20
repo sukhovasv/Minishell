@@ -52,7 +52,10 @@ int	search_and_execute(char **argv, t_env *env)
 		free(path);
 	}
 	if (status == -1)
-		perror(path);
+	{
+		ft_putstr_fd("minishell: ", 2);
+		perror(argv[0]);
+	}
 	else
 		status = try_execute(fullpath, argv, env->environ);
 	return (status);
@@ -86,7 +89,7 @@ int	try_path_execution(char *path, char **argv, char *const fullpath)
 	return (errcode);
 }
 
-int	try_execute(char *cmd, char **argv, char **envp)
+int	try_execute(char *cmd, char **argv, t_env *env)
 {
 	if (access(cmd, F_OK) == -1)
 		return (0);
@@ -95,8 +98,8 @@ int	try_execute(char *cmd, char **argv, char **envp)
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(cmd, 2);
 		ft_putendl_fd(": Permission denied", 2);
-		exit(126);
+		builtin_exit_wrapper(env, 126);
 	}
-	execve(cmd, argv, envp);
+	execve(cmd, argv, env->environ);
 	return (0);
 }
