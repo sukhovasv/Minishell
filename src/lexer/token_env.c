@@ -43,10 +43,9 @@ char	*find_env_value(const char *var_name, size_t len, t_env *env)
 				&& env->environ[i][env_name_len] != '=')
 			env_name_len++;
 		if (env_name_len == len
-			&& ft_strncmp(env->environ[i], var_name, len) == 0)
-		{
+			&& ft_strncmp(env->environ[i], var_name, len) == 0
+			&& ft_strchr(env->environ[i], '='))
 			return (ft_strdup(env->environ[i] + len + 1));
-		}
 		i++;
 	}
 	return (ft_strdup(""));
