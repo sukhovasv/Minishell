@@ -24,6 +24,7 @@ SRC_FILES	= \
 	$(SRC_DIR)/heredoc/heredoc_temp_file.c $(SRC_DIR)/heredoc/heredoc_cleanup.c \
 	$(SRC_DIR)/heredoc/heredoc_content_helpers.c \
 	$(SRC_DIR)/signals/signals.c \
+	$(SRC_DIR)/signals/signal_handlers.c $(SRC_DIR)/signals/signals_heredoc.c \
 	$(SRC_DIR)/lexer/token_handlers.c $(SRC_DIR)/lexer/tokenizer.c \
 	$(SRC_DIR)/lexer/token_basic.c $(SRC_DIR)/lexer/token_creation.c \
 	$(SRC_DIR)/lexer/token_env.c $(SRC_DIR)/lexer/token_operator.c \
