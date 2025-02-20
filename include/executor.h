@@ -44,5 +44,11 @@ int			execute_external_command(t_ast_node *node, t_fd_info *fd_info, t_env *env)
 int search_and_execute(char **argv, t_env *env);
 int try_direct_execution(char **argv, char *fullpath);
 int			try_execute(char *cmd, char **argv, char **envp);
+void	handle_first_child(int *pipefd, t_ast_node *node,
+								  t_env *env, t_fd_info *fd_info);
+void	handle_second_child(int *pipefd, t_ast_node *node,
+							t_env *env, t_fd_info *fd_info);
+int	handle_pipe_error(int *pipefd);
+int	handle_fork_error(int *pipefd, pid_t pid1);
 
 #endif

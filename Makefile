@@ -15,12 +15,14 @@ SRC_DIR		= ./src
 SRC_FILES	= \
 	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/executor/external_executor.c $(SRC_DIR)/executor/pipe_node_executor.c \
+	$(SRC_DIR)/executor/pipe_node_executor_2.c \
 	$(SRC_DIR)/executor/ast_executor.c $(SRC_DIR)/executor/redirections_executor.c \
 	$(SRC_DIR)/executor/pipe_command_executor.c $(SRC_DIR)/executor/utils_executor.c \
 	$(SRC_DIR)/heredoc/heredoc_handlers.c $(SRC_DIR)/heredoc/heredoc_init.c \
 	$(SRC_DIR)/heredoc/heredoc_utils.c $(SRC_DIR)/heredoc/heredoc_utils_2.c \
 	$(SRC_DIR)/heredoc/heredoc_process.c $(SRC_DIR)/heredoc/heredoc_content.c \
 	$(SRC_DIR)/heredoc/heredoc_temp_file.c $(SRC_DIR)/heredoc/heredoc_cleanup.c \
+	$(SRC_DIR)/heredoc/heredoc_content_helpers.c \
 	$(SRC_DIR)/signals/signals.c \
 	$(SRC_DIR)/lexer/token_handlers.c $(SRC_DIR)/lexer/tokenizer.c \
 	$(SRC_DIR)/lexer/token_basic.c $(SRC_DIR)/lexer/token_creation.c \
