@@ -25,5 +25,8 @@ void handle_pending_signals(void);
 void setup_heredoc_signals(void);
 void	reset_sighandlers(t_env *env);
 
+void	handle_sigint(int sig, siginfo_t *siginfo, void *f);
+void	handle_signal_child(int sig);
+
 
 #endif
