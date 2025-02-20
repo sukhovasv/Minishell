@@ -15,6 +15,7 @@ SRC_DIR		= ./src
 SRC_FILES	= \
 	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/executor/external_executor.c $(SRC_DIR)/executor/pipe_node_executor.c \
+	$(SRC_DIR)/executor/pipe_node_executor_2.c \
 	$(SRC_DIR)/executor/ast_executor.c $(SRC_DIR)/executor/redirections_executor.c \
 	$(SRC_DIR)/executor/pipe_command_executor.c $(SRC_DIR)/executor/utils_executor.c \
 	$(SRC_DIR)/heredoc/heredoc_handlers.c $(SRC_DIR)/heredoc/heredoc_init.c \
