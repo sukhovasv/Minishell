@@ -17,7 +17,8 @@ char	*reallocate_result(char *result, char *env_val, size_t j,
 {
 	char	*new_result;
 
-	new_result = realloc(result, (j + env_len + 2) * sizeof(char));
+	new_result = ft_reallocarray(result, j,
+			(j + env_len + PATH_MAX), sizeof(char));
 	if (!new_result)
 	{
 		free(result);
