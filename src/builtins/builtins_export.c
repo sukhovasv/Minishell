@@ -20,7 +20,7 @@ static int	handle_export_error(char *arg)
 	return (1);
 }
 
-static int	export_var(t_env *env, char *key, char *value)
+int	export_var(t_env *env, char *key, char *value)
 {
 	if (!is_valid_env_name(key))
 		return (handle_export_error(key));

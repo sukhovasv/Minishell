@@ -37,7 +37,7 @@ char	*handle_variable_expansion(char *line, t_env *env)
 int	check_heredoc_line(char **line, t_token *token,
 						t_env *env, int expand_vars)
 {
-	if (!line)
+	if (!*line)
 	{
 		ft_putstr_fd(WRONG_DELIMITER, STDERR_FILENO);
 		return (0);

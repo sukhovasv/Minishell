@@ -45,6 +45,7 @@ void	free_env(t_env *env);
 int		builtin_env(char **environ);
 void	print_sorted_env(t_env *env);
 int		builtin_export(char **argv, t_env *env);
+int		export_var(t_env *env, char *key, char *value);
 int		builtin_unset(char **argv, t_env *env);
 char	*create_env_string(const char *key, const char *value);
 int		is_valid_env_name(const char *str);
