@@ -37,6 +37,11 @@ char	*handle_variable_expansion(char *line, t_env *env)
 int	check_heredoc_line(char **line, t_token *token,
 						t_env *env, int expand_vars)
 {
+	if (!line)
+	{
+		ft_putstr_fd(WRONG_DELIMITER, STDERR_FILENO);
+		return (0);
+	}
 	if (g_signal_received == SIGINT)
 		return (-1);
 	if (is_end_of_heredoc(*line, token->value))

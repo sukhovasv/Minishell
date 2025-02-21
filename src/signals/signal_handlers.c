@@ -25,7 +25,7 @@ void	handle_sigint(int sig, siginfo_t *siginfo, void *f)
 	rl_redisplay();
 }
 
-int handle_pending_signals(void)
+int	handle_pending_signals(void)
 {
 	g_signal_received = 0; //TODO
 	return (0);

@@ -37,5 +37,6 @@
 
 # define EX_NOEXEC		126
 # define EX_NOTFOUND	127
+# define WRONG_DELIMITER "warning: here-document delimited by end-of-file\n"
 
 #endif

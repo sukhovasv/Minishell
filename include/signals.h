@@ -33,7 +33,7 @@ void	reset_signals(void);
 void	setup_child_signals(void);
 void	setup_parent_signals(t_env *env);
 void	ignore_signals(void);
-void	handle_pending_signals(void);
+int		handle_pending_signals(void);
 void	setup_heredoc_signals(void);
 void	reset_sighandlers(t_env *env);
 void	handle_sigint(int sig, siginfo_t *siginfo, void *f);

@@ -27,11 +27,6 @@ int	handle_heredoc_content(t_token *token, t_env *env)
 	while (1)
 	{
 		line = readline("> ");
-		if (!line)
-		{
-			ft_putstr_fd("warning: here-documentdelimited by end-of-file\n", STDERR_FILENO);
-			break ;
-		}
 		status = check_heredoc_line(&line, token, env, expand_vars);
 		if (status == -1)
 			return (cleanup_heredoc(line, token, fd));
