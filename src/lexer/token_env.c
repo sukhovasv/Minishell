@@ -61,7 +61,7 @@ char	*find_env_value_null(const char *var_name, size_t len, t_env *env)
 	{
 		env_name_len = 0;
 		while (env->environ[i][env_name_len]
-			   && env->environ[i][env_name_len] != '=')
+			&& env->environ[i][env_name_len] != '=')
 			env_name_len++;
 		if (env_name_len == len
 			&& ft_strncmp(env->environ[i], var_name, len) == 0

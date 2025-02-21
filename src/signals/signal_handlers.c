@@ -27,7 +27,7 @@ void	handle_sigint(int sig, siginfo_t *siginfo, void *f)
 
 int	handle_pending_signals(void)
 {
-	g_signal_received = 0; //TODO
+	g_signal_received = 0;
 	return (0);
 }
 
