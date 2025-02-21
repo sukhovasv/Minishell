@@ -31,6 +31,7 @@ static char	*get_input_prompt(int is_interactive)
 	char	buf[4096];
 	ssize_t	bytes_read;
 
+	rl_event_hook = handle_pending_signals;
 	line = NULL;
 	if (!is_interactive)
 	{

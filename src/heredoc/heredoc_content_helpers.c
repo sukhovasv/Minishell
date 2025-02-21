@@ -37,7 +37,7 @@ char	*handle_variable_expansion(char *line, t_env *env)
 int	check_heredoc_line(char **line, t_token *token,
 						t_env *env, int expand_vars)
 {
-	if (!(*line) || g_signal_received == SIGINT)
+	if (g_signal_received == SIGINT)
 		return (-1);
 	if (is_end_of_heredoc(*line, token->value))
 	{

@@ -25,14 +25,10 @@ void	handle_sigint(int sig, siginfo_t *siginfo, void *f)
 	rl_redisplay();
 }
 
-void	handle_pending_signals(void)
+int handle_pending_signals(void)
 {
-	if (g_signal_received == SIGINT)
-	{
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	g_signal_received = 0;
+	g_signal_received = 0; //TODO
+	return (0);
 }
 
 void	setup_signals(t_env *env)
