@@ -51,6 +51,27 @@ char	*find_env_value(const char *var_name, size_t len, t_env *env)
 	return (ft_strdup(""));
 }
 
+char	*find_env_value_null(const char *var_name, size_t len, t_env *env)
+{
+	int		i;
+	size_t	env_name_len;
+
+	i = 0;
+	while (env->environ[i])
+	{
+		env_name_len = 0;
+		while (env->environ[i][env_name_len]
+			&& env->environ[i][env_name_len] != '=')
+			env_name_len++;
+		if (env_name_len == len
+			&& ft_strncmp(env->environ[i], var_name, len) == 0
+			&& ft_strchr(env->environ[i], '='))
+			return (ft_strdup(env->environ[i] + len + 1));
+		i++;
+	}
+	return (NULL);
+}
+
 char	*get_env_value(const char *str, t_env *env)
 {
 	char	*value;

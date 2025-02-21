@@ -41,6 +41,7 @@ size_t	get_token_length(const char *str, int *in_quotes, char *quote_char);
 t_token	*new_token(t_token_type type, const char *value, size_t len);
 t_token	*tokenize(const char *input, t_env *env);
 char	*find_env_value(const char *var_name, size_t len, t_env *env);
+char	*find_env_value_null(const char *var_name, size_t len, t_env *env);
 t_token	*create_heredoc_token(const char *str, size_t len, int *expand_vars);
 char	*process_token_value(const char *value, size_t len, int *has_quotes);
 void	update_index_after_env_var(t_word_parser *parser);

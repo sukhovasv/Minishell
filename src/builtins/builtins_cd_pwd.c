@@ -16,7 +16,7 @@ static int	cd_handle_home(t_env *env, char *old_pwd)
 {
 	char	*home;
 
-	home = get_env_value("HOME", env);
+	home = find_env_value_null("HOME", ft_strlen("HOME"), env);
 	if (!home)
 	{
 		free(old_pwd);
@@ -51,9 +51,9 @@ static void	cd_update_pwd(t_env *env, char *old_pwd)
 	char	path[PATH_MAX];
 
 	if (old_pwd)
-		update_existing_variable(env, "OLDPWD", old_pwd);
+		export_var(env, "OLDPWD", old_pwd);
 	if (getcwd(path, PATH_MAX))
-		update_existing_variable(env, "PWD", path);
+		export_var(env, "PWD", path);
 }
 
 int	builtin_cd(char **argv, t_env *env)
