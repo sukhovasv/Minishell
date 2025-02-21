@@ -131,4 +131,7 @@ void		dllist_foreach(t_dlnode *list,
 void		dllist_foreach_el(t_dlnode *list,
 				void (*f)(void *, void *), void *user_data);
 
+void		*ft_reallocarray(void *ptr,
+				size_t oldnmemb, size_t newnmemb, size_t size);
+
 #endif //LIBFT_H

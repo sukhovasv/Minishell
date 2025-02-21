@@ -2,7 +2,7 @@ NAME := libft.a
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 SRC_FILES := ft_atoi.c mem/ft_bzero.c mem/ft_calloc.c ft_isalnum.c ft_isalpha.c \
-			ft_isascii.c ft_isdigit.c ft_isprint.c ft_itoa.c \
+			ft_isascii.c ft_isdigit.c ft_isprint.c ft_itoa.c ft_reallocarray.c\
 			mem/ft_memchr.c mem/ft_memcmp.c mem/ft_memcpy.c mem/ft_memmove.c \
 			mem/ft_memset.c ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			ft_putstr_fd.c str/ft_split.c str/ft_strchr.c str/ft_strdup.c str/ft_striteri.c \
